@@ -1,0 +1,10 @@
+# -*- Makefile -*-
+# $Id: BuildFile,v 1.1 2008/07/28 11:31:57 paus Exp $
+
+<use name=clhep>
+<use name=root>
+
+<flags CXXFLAGS="-g">
+<export>
+  <lib name=MitCommonMathTools>
+</export>
