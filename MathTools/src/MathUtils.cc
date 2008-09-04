@@ -1,12 +1,17 @@
-// $Id $
+// $Id:$
 
 #include "MitCommon/MathTools/interface/MathUtils.h"
 
-using namespace mitMath;
+using namespace mitcommon;
 
-//ClassImp(mitMath::MathUtils)
+//--------------------------------------------------------------------------------------------------
+double MathUtils::AddInQuadrature(double a, double b)
+{
+  return(TMath::Sqrt(a*a + b*b));
+}
 
-double mitMath::deltaPhi(double phi1, double phi2)
+//--------------------------------------------------------------------------------------------------
+double MathUtils::DeltaPhi(double phi1, double phi2)
 {
   double ans = fabs(phi1-phi2);
   while(ans>M_PI)
@@ -14,7 +19,8 @@ double mitMath::deltaPhi(double phi1, double phi2)
   return(ans);
 }
 
-double mitMath::phiEtaDeltaR(double phi1, double eta1, double phi2, double eta2)
+//--------------------------------------------------------------------------------------------------
+double MathUtils::DeltaR(double phi1, double eta1, double phi2, double eta2)
 {
   double dphi = fabs(phi1-phi2);
   while(dphi>M_PI) dphi = fabs(2*M_PI-dphi);
@@ -23,22 +29,20 @@ double mitMath::phiEtaDeltaR(double phi1, double eta1, double phi2, double eta2)
   return(dR);
 }
 
-double mitMath::deltaR(mithep::FourVector v1, mithep::FourVector v2)
+//--------------------------------------------------------------------------------------------------
+double MathUtils::DeltaR(const FourVector &v1, const FourVector &v2)
 {
-  return mitMath::phiEtaDeltaR(v1.Phi(),v1.Eta(),v2.Phi(),v2.Eta());
+  return MathUtils::DeltaR(v1.Phi(),v1.Eta(),v2.Phi(),v2.Eta());
 }
 
-double mitMath::addInQuadrature(double a, double b)
-{
-  return(TMath::Sqrt(a*a + b*b));
+//--------------------------------------------------------------------------------------------------
+double MathUtils::Eta2Theta(double eta) 
+{ 
+  return 2.*TMath::ATan(exp(-eta)); 
 }
 
-std::string mitMath::ftoa(double x)
-{
-  char a[100];
-  sprintf(a,"%g",x);
-  return(a);
+//--------------------------------------------------------------------------------------------------
+double MathUtils::Theta2Eta(double theta) 
+{ 
+  return -TMath::Log(TMath::Tan(theta/2.)); 
 }
-
-double mitMath::Eta2Theta(double eta) { return 2.*atan(exp(-eta)) ; }
-double mitMath::Theta2Eta(double theta) { return -log(tan(theta/2.)) ; }

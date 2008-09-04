@@ -1,32 +1,29 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: $
+// $Id: MathUtils.h,v 1.1 2008/08/18 14:57:43 sixie Exp $
 //
 // MathUtils
 //
-// Math Utility functions
+// Math utility functions.
 //
-// Authors: S.Xie
+// Authors: S.Xie, C.Loizides
 //--------------------------------------------------------------------------------------------------
 
-#ifndef MATHTOOLS_MATHUTILS_H
-#define MATHTOOLS_MATHUTILS_H
+#ifndef MITCOMMON_MATHTOOLS_MATHUTILS_H
+#define MITCOMMON_MATHTOOLS_MATHUTILS_H
 
-#include "MitAna/DataTree/interface/Types.h"
+#include "MitCommon/DataFormats/interface/Types.h"
 #include <TMath.h>
 
-namespace mitMath
+namespace mitcommon
 {
-
-  /// Convert double into a string
-  std::string ftoa(double x);
-
-  //Math functions
-
-  double deltaPhi(double phi1, double phi2);
-  double phiEtaDeltaR(double phi1, double eta1, double phi2, double eta2);
-  double deltaR(mithep::FourVector v1, mithep::FourVector v2);
-  double addInQuadrature(double a, double b);  
-  double Eta2Theta(double eta);
-  double Theta2Eta(double theta);
+  class MathUtils {
+    public:
+      static double AddInQuadrature(double a, double b);  
+      static double DeltaPhi(double phi1, double phi2);
+      static double DeltaR(const FourVector &v1, const FourVector &v2);
+      static double DeltaR(double phi1, double eta1, double phi2, double eta2);
+      static double Eta2Theta(double eta);
+      static double Theta2Eta(double theta);
+  };
 }
 #endif
