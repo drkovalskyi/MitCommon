@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: MathUtils.h,v 1.1 2008/08/18 14:57:43 sixie Exp $
+// $Id: MathUtils.h,v 1.2 2008/09/04 17:11:31 loizides Exp $
 //
 // MathUtils
 //
@@ -14,7 +14,7 @@
 #include "MitCommon/DataFormats/interface/Types.h"
 #include <TMath.h>
 
-namespace mitcommon
+namespace mithep
 {
   class MathUtils {
     public:

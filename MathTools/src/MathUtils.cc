@@ -1,8 +1,8 @@
-// $Id:$
+// $Id: MathUtils.cc,v 1.2 2008/09/04 17:11:31 loizides Exp $
 
 #include "MitCommon/MathTools/interface/MathUtils.h"
 
-using namespace mitcommon;
+using namespace mithep;
 
 //--------------------------------------------------------------------------------------------------
 double MathUtils::AddInQuadrature(double a, double b)
