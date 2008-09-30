@@ -1,4 +1,4 @@
-// $Id: MultiVertexFitter.cc,v 1.6 2008/09/04 13:55:29 loizides Exp $
+// $Id: MultiVertexFitter.cc,v 1.1 2008/09/17 04:01:51 loizides Exp $
 
 #include "MitCommon/VertexFit/interface/MultiVertexFitter.h"
 #include <algorithm>
@@ -1198,6 +1198,137 @@ float MultiVertexFitter::getDecayLength(vertexNumber nv, vertexNumber mv,
     dlerr = -sqrt(-dlerr);
   
   return dl;
+}
+
+float MultiVertexFitter::getDecayLength(vertexNumber nv, vertexNumber mv, 
+                                        const ThreeVector& dir, float& dlerr) const
+{
+  Hep3Vector dirHep(dir.x(),dir.y(),dir.z());
+  return getDecayLength(nv, mv, dirHep, dlerr);
+}
+
+float MultiVertexFitter::getZDecayLength(vertexNumber nv, vertexNumber mv,
+                              const Hep3Vector& mom, float& dlerr) const
+{
+  //----------------------------------------------------------------------------
+  // Get the signed decay length from vertex nv to vertex mv along the
+  // z direction of the momentum vector, mom.
+  // dlerr is the error on the decay length including the full error
+  // matrix.
+  //----------------------------------------------------------------------------
+  // Start with good initialization
+  dlerr = -999.;
+
+  // Check that the fit worked
+  if (_stat != 0)
+    return -999.;
+
+  // Check that vertices are within range.
+  if (nv<0 || nv>=_ctvmq.nvertx)
+    return -999.;
+  if (mv<1 || mv> _ctvmq.nvertx)
+    return -999.;
+  if (nv >= mv)
+    return -999.;
+
+  // Calculate the vector length
+  float length = fabs(mom.z());
+  if (length <= 0.)
+    return -999.;
+
+  // Get the vector pointing from first vertex (nv) to second vertex (mv)
+  Hep3Vector dv = getVertexHep(mv) - getVertexHep(nv);
+
+  //----------------------------------------------------------------------------
+  // Calculate the "decay distance"
+  //----------------------------------------------------------------------------
+  // Project the vertex vector onto the momentum vector direction
+  float      dl = (dv.z()*mom.z())/length;
+
+  //----------------------------------------------------------------------------
+  // Calculate the error on that distance
+  //----------------------------------------------------------------------------
+  // Set up the column matrix of derivatives
+  HepMatrix A(2,1);
+  A(1,1) =  mom.z()/length;
+  A(2,1) = -mom.z()/length;
+
+  // Need to catch the special case if the first vertex is the primary
+  int nvf = 0;
+  if (nv == 0) {
+    nvf = -1;
+    for (int jv=0; jv<_ctvmq.nvertx; ++jv) {
+      if (_ctvmq.vtxpnt[0][jv] == 0)
+        nvf = 0;
+    }
+  }
+  // Get the relevant submatrix of the full error matrix.
+  HepMatrix V(2,2,0);
+  if (nvf < 0) {
+    // Geometric uncertainties (positions second vertex)
+    V(1,1) = getErrorMatrixHep(_ctvmq.voff[mv-1]+3,_ctvmq.voff[mv-1]+3);
+    // Geometric uncertainties (positions first vertex)
+    V(2,2) = _ctvmq.exyzpv[2][2];
+  }
+  else {
+    // Get the indices into the error matrix vmat
+    int index[2] = { _ctvmq.voff[mv-1]+3,_ctvmq.voff[nv-1]+3 };
+    // Handeling the case of the primary vertex
+    if (nv == 0)
+      index[1] = 3;
+    // All right... copy
+    for(int j=0; j<2; ++j)
+      for(int k=0; k<2; ++k)
+        V[j][k] = getErrorMatrixHep(index[j],index[k]);
+  }
+  // Calculate square of dlerr
+  dlerr = (A.T() * V * A )(1,1);
+  if (dlerr >= 0.)
+    dlerr =  sqrt(dlerr);
+  else
+    dlerr = -sqrt(-dlerr);
+
+  return dl;
+}
+
+float MultiVertexFitter::getZDecayLength(vertexNumber nv, vertexNumber mv,
+                              const ThreeVector& mom, float& dlerr) const
+{
+  Hep3Vector momHep(mom.x(),mom.y(),mom.z());
+  return getZDecayLength(nv, mv, momHep, dlerr);
+}
+
+float MultiVertexFitter::getImpactPar(vertexNumber prdV, vertexNumber dcyV,
+                                         const Hep3Vector &v, float &dxyerr) const
+{
+  Hep3Vector   PVtx   = getVertexHep     (prdV);
+  Hep3Vector   DVtx   = getVertexHep     (dcyV);
+  HepSymMatrix PVtxCv = getErrorMatrixHep(prdV);
+  HepSymMatrix DVtxCv = getErrorMatrixHep(dcyV);
+
+  double norma = v.perp();
+  if (norma <= 0) {
+    dxyerr = -999.;
+    return -999.0;
+  }
+  double dxy = ((v.cross(DVtx-PVtx)).z())/norma;
+
+  // Calculate error on B impact parameter:
+  double cosPhi = cos(v.phi());
+  double sinPhi = sin(v.phi());
+  dxyerr = cosPhi * cosPhi * (DVtxCv[1][1] + PVtxCv[1][1])
+    +      sinPhi * sinPhi * (DVtxCv[0][0] + PVtxCv[0][0])
+    -      2.0 * cosPhi * sinPhi * (DVtxCv[0][1] + PVtxCv[0][1]);
+  dxyerr = (dxyerr>0.0) ? sqrt(dxyerr) : -999.;
+
+  return dxy;
+}
+
+float MultiVertexFitter::getImpactPar(vertexNumber prdV, vertexNumber dcyV,
+                                         const ThreeVector &v, float &dxyerr) const
+{
+  Hep3Vector vHep(v.x(),v.y(),v.z());
+  return getImpactPar(prdV, dcyV, vHep, dxyerr);
 }
 
 float MultiVertexFitter::get_dr(vertexNumber nv, vertexNumber mv, float& drerr) const

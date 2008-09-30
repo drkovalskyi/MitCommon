@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: MultiVertexFitter.h,v 1.6 2008/09/14 15:28:18 loizides Exp $
+// $Id: MultiVertexFitter.h,v 1.1 2008/09/17 04:01:51 loizides Exp $
 //
 // MultiVertexFitter class header file
 //
@@ -235,6 +235,16 @@ namespace mithep {
       // return decay length
       float            getDecayLength(vertexNumber nv, vertexNumber mv, const Hep3Vector& dir,
                                       float& dlerr) const;
+      float            getDecayLength(vertexNumber nv, vertexNumber mv, const ThreeVector& dir,
+                                      float& dlerr) const;                                      
+      float            getZDecayLength(vertexNumber nv, vertexNumber mv,
+                                      const Hep3Vector& dir, float& dlerr) const;  
+      float            getZDecayLength(vertexNumber nv, vertexNumber mv,
+                                      const ThreeVector& dir, float& dlerr) const;                                        
+      float            getImpactPar(vertexNumber prdV, vertexNumber dcyV,
+                                      const Hep3Vector &v, float &dxyerr) const;     
+      float            getImpactPar(vertexNumber prdV, vertexNumber dcyV,
+                                      const ThreeVector &v, float &dxyerr) const;                      
       float            get_dr(vertexNumber nv, vertexNumber mv, float& drerr) const;
       float            get_dz(vertexNumber nv, vertexNumber mv, float& dzerr) const;
       // return location of vertex
