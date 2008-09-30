@@ -1,4 +1,4 @@
-c $Id:$
+c $Id: ctvmft.F,v 1.1 2008/09/17 04:01:49 loizides Exp $
 #include "MitCommon/Ctvmft/interface/dimensions.hh"
 
 C DEC/CMS REPLACEMENT HISTORY, Element CTVMFT.CDF
@@ -1021,7 +1021,7 @@ C   the last step was did not do much good
           IF (STPTK.GT.0.5) THEN
             STPTK = AMIN1(STPTK,9999.0)
 C         give up in disgust
-            WRITE(*,*) 'Chi2: ',CHISQR(0)
+CP            WRITE(*,*) 'Chi2: ',CHISQR(0)
             IERR = 9
             IJKERR(2) = 5
             WRITE(STRING,2095) ITER,StpTk,CHISQR(0)
