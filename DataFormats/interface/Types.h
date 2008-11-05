@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Types.h,v 1.2 2008/09/10 03:27:34 loizides Exp $
+// $Id: Types.h,v 1.3 2008/09/14 14:07:18 loizides Exp $
 //
 // Types
 //
@@ -38,7 +38,7 @@ namespace mithep
 
   typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<Double32_t> > FourVector32;
   typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<Double32_t> > FourVectorM32;
-  typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<Double32_t> > FourVectorE32;
+  typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<Double32_t> > FourVectorE32;
   typedef ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,
                                              ROOT::Math::DefaultCoordinateSystemTag> 
                                              ThreeVector32;
