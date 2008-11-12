@@ -1,4 +1,4 @@
-// $Id: HelixIntersector.cc,v 1.2 2008/09/04 13:55:30 loizides Exp $
+// $Id: HelixIntersector.cc,v 1.1 2008/09/17 04:01:50 loizides Exp $
 
 #include "MitCommon/MathTools/interface/HelixIntersector.h"
 #include <iostream>
@@ -91,8 +91,10 @@ HelixIntersector::TrackParams::TrackParams(const TVectorD *trk, const TVector3 *
   double rho = Radius() +  Helicity() * D0();
   double phi = Helicity() * M_PI/2.0 + Phi0();
   double z   = 0.0;
-  if ( rho < 0 )
-    printf("Cylindrical coordinates supplied with negative Rho\n");
+//   if ( rho < 0 ) {
+//     printf("Cylindrical coordinates supplied with negative Rho\n");
+//     printf("Radius = %5f, Helicity = %5f, D0 = %5f, Rho=%5f\n", Radius(), Helicity(), D0(), rho);
+//   }
   fCenter.SetXYZ(rho*cos(phi),rho*sin(phi),z);
 
   // Original code ....
