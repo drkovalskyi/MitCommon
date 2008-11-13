@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: MultiVertexFitter.h,v 1.2 2008/09/30 12:48:12 bendavid Exp $
+// $Id: MultiVertexFitter.h,v 1.3 2008/11/13 16:34:28 paus Exp $
 //
 // MultiVertexFitter class header file
 //
@@ -96,6 +96,7 @@ namespace mithep {
   class MultiVertexFitter {
 
     public:
+
       //--------------------------------------------------------------------------------------------
       // Enumerations
       //--------------------------------------------------------------------------------------------
@@ -267,15 +268,15 @@ namespace mithep {
       allocateVertexNumber();
       void             resetAllocatedVertexNumber();
 
-      // Accessors for getting information relative to ijk errors Get the error code from the three ijk
-      // indexes into the argument variables
+      // Accessors for getting information relative to ijk errors get the error code from the three
+      // ijk indexes into the argument variables
       void             getIJKErr(int& err0, int& err1, int& err2) const;
       // Return each error code from the three ijk indexes
       int              getIJKErr0() const;
       int              getIJKErr1() const;
       int              getIJKErr2() const;
 
-      // Get the track-id of the track causing a fatal error as indicated by the corresponding ijk error
+      // Get track-id of the track causing a fatal error as indicated by the corresponding ijk error
       int              getErrTrackId() const;
 
       // Set new track reference point
@@ -287,13 +288,13 @@ namespace mithep {
       friend std::ostream& operator << (std::ostream& os, const MultiVertexFitter& vfit);
 
     protected:
-      std::string      _expert;                 // string: name and email of MultiVertexFitter expert
+      std::string      _expert;                 // string: name, email of MultiVertexFitter expert
       int              _stat;                   // status returned from fit.
 
-      static const int _maxvtx = CTVMFT_MAXVTX; //  6;  // Maximum number of vertices
-      static const int _maxmcn = CTVMFT_MAXMCN; //  4;  // Maximum number of mass constraints
-      static const int _maxtrk = CTVMFT_MAXTRK; // 50;  // Maximum number of tracks
-      static const int _maxitr = CTVMFT_MAXITR; // 10;  // Maximum number of iteration steps
+      static const int _maxvtx = CTVMFT_MAXVTX; // maximum number of vertices
+      static const int _maxmcn = CTVMFT_MAXMCN; // maximum number of mass constraints
+      static const int _maxtrk = CTVMFT_MAXTRK; // maximum number of tracks
+      static const int _maxitr = CTVMFT_MAXITR; // maximum number of iteration steps
       static const int _maxdim = 5*(CTVMFT_MAXVTX+1)+3*CTVMFT_MAXTRK+CTVMFT_MAXMCN;
 
       // FIDDLE must have access to MultiVertexFitter's (other) protected data like _maxvtx, etc. It
