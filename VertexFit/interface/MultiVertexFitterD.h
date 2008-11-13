@@ -1,72 +1,14 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: MultiVertexFitter.h,v 1.2 2008/09/30 12:48:12 bendavid Exp $
+// $Id: $
 //
-// MultiVertexFitter class header file
+// MultiVertexFitterD class header file
 //
-// Author: Craig Blocker, Brandeis CDF Group
-//         Christoph Paus, MIT
-//           + porting to CMS
-//           + major cleanup
-//           + removed track dependency
-//           - removed CLHEP dependence, now using root for vector/matrix operations
-//           - re-enbale the track extrapolation
+// Compact version of MultiVertexFitter
 //
-// Description:  Does generic wrapping of the multiple vertex fitter (wrapper of CTVMFT).
-//
-// Revision History:
-//   May 27, 1999  Craig Blocker     Creation
-//   Jun 22, 2001  Craig Blocker     Fix a few bugs in checking on vertices (such as pointing to
-//                                   primary vertex wasn't allowed)
-//   May 07 2002   Mat Martin        Added support for "zero track" vertices: Pointing multi track
-//                 Jonas Rademacker  vertices at another vertex which has no tracks directly	  
-//                                   associated with it.  This is acheived through the routine:	  
-//                                   vertexPoint_0track. See the implementation in		  
-//                                   MultiVertexFitter.cc                                         
-//   Sep 07, 2002 Joao Guimaraes     Added accessors for ijk errors and track-id of tracks that
-//                                   produce some of those errors. These methods are:
-//                                        getIJKErr(int&,int&,int&) const
-//                                        getIJKErr0() const
-//                                        getIJKErr1() const
-//                                        getIJKErr2() const
-//                                        getErrTrackId() const
-//   Sep 15, 2002 Joao Guimaraes     Increased maximum number of tracks to 50 (_maxtrk).
-//   Nov 11, 2002 Craig Blocker      Put protection in Fortran for potential bombs [divide by zero,
-//                                   sqrt(neg. number]. Added particle specific addTrack routines
-//                                   (addElectron, addPion, etc.) Added methods to directly access
-//                                   the ctvmft error matrix and pointers.
-//
-//   Mar 18, 2003 Dmitry Litvintsev  added ability to restore the state of MultiVertexFitter
-//                                   object from FORTRAN common blocks function is
-//                                   'restoreFromCommons()' use it with care, fortran common blocks
-//                                   have to be properly initialised. Contact me if unsure how to
-//                                   use it. This routine is not needed for standard use of
-//                                   MultiVertexFitter.
-//   Oct 15, 2003 Sal Rappoccio      Added accessor to add tracks to ctvmft via a track id and the
-//                                   track parameters and covariance
-//   Dec 02, 2003 Sal Rappoccio      Added an interface to use extrapolated track errors in a
-//                                   "transparent" way. The new interface is used as:
-//
-//                                     MultiVertexFitter fit;
-//                                     fit.init();
-//                                     fit.setPrimaryVertex(p1);    // Note: the order matters
-//                                     fit.setReferencePoint(p2);
-//                                     fit.addTrack(trk1, M_PION, 1);
-//                                     fit.addTrack(trk2, M_PION, 1);
-//                                     fit.fit();
-//                                     Hep3Vector &pos = fit.getVertex(1);
-//
-//                                   "pos" will now hold the new vertex constructed from tracks
-//                                   with errors referenced at the new reference point "p2". This
-//                                   track extrapolation code is OFF by default. To turn it ON use:
-//
-//                                     fit.setReferencePoint(p2);
-//
-//                                   AddTrack was modified to implement this feature.
-//   Jul 18, 2008  Christoph Paus    Works for CMS and any other type of Helix fitting.
 //--------------------------------------------------------------------------------------------------
 
-#ifndef MITCOMMON_VERTEXFIT_MULTIVERTEXFITTER_H
-#define MITCOMMON_VERTEXFIT_MULTIVERTEXFITTER_H
+#ifndef MITCOMMON_VERTEXFIT_MULTIVERTEXFITTERD_H
+#define MITCOMMON_VERTEXFIT_MULTIVERTEXFITTERD_H
 
 #include <string>
 #include <iostream>
@@ -80,20 +22,20 @@
 #include <CLHEP/Matrix/Vector.h>
 
 #include "MitCommon/DataFormats/interface/Types.h"
-#include "MitCommon/Ctvmft/interface/dimensions.hh"
+#include "MitCommon/Ctvmft/interface/ddimensions.hh"
 
 //-------------------------------------------------------------------------------------------------
 // Fortran routines to get address of the start of the ctvmq and ctvmfr common blocks
 //-------------------------------------------------------------------------------------------------
 extern "C" {
-   int ctvmq_address_ (void);
-   int ctvmfr_address_(void);
-   int fiddle_address_(void);
-   int trkprm_address_(void);
+   int dctvmq_address_ (void);
+   int dctvmfr_address_(void);
+   int dfiddle_address_(void);
+   int dtrkprm_address_(void);
 }
 
 namespace mithep {
-  class MultiVertexFitter {
+  class MultiVertexFitterD {
 
     public:
       //--------------------------------------------------------------------------------------------
@@ -106,8 +48,8 @@ namespace mithep {
       //--------------------------------------------------------------------------------------------
       // *structors
       //--------------------------------------------------------------------------------------------
-      MultiVertexFitter();
-      ~MultiVertexFitter() {}
+      MultiVertexFitterD();
+      ~MultiVertexFitterD() {}
 
       //--------------------------------------------------------------------------------------------
       // Fundamental funtions
@@ -224,47 +166,50 @@ namespace mithep {
       float            chisq_rphiz(const int trkId) const;
 
       // return fit track four momentum
-      //HepLorentzVector getTrackP4 (const int trkId) const;
-      FourVector       getTrackP4 (const int trkId) const;
+      //HepLorentzVector getTrackP4       (const int trkId) const;
+      FourVector       getTrackP4       (const int trkId) const;
 
       //// return fit track parameters
-      //Helix            getHelix   (const int trkId) const;
+      //Helix            getHelix         (const int trkId) const;
+
       // return fit mass and get error
-      float            getMass    (int ntrk, const int trkIds[], float& dmass) const;
+      float            getMass          (int ntrk, const int trkIds[], float& dmass) const;
 
       // return decay length
-      float            getDecayLength(vertexNumber nv, vertexNumber mv, const Hep3Vector& dir,
-                                      float& dlerr) const;
-      float            getDecayLength(vertexNumber nv, vertexNumber mv, const ThreeVector& dir,
-                                      float& dlerr) const;                                      
-      float            getZDecayLength(vertexNumber nv, vertexNumber mv,
-                                      const Hep3Vector& dir, float& dlerr) const;  
-      float            getZDecayLength(vertexNumber nv, vertexNumber mv,
-                                      const ThreeVector& dir, float& dlerr) const;                                        
-      float            getImpactPar(vertexNumber prdV, vertexNumber dcyV,
-                                      const Hep3Vector &v, float &dxyerr) const;     
-      float            getImpactPar(vertexNumber prdV, vertexNumber dcyV,
-                                      const ThreeVector &v, float &dxyerr) const;                      
-      float            get_dr(vertexNumber nv, vertexNumber mv, float& drerr) const;
-      float            get_dz(vertexNumber nv, vertexNumber mv, float& dzerr) const;
+      float            getDecayLength   (vertexNumber nv, vertexNumber mv, const Hep3Vector& dir,
+					 float& dlerr) const;
+      float            getDecayLength   (vertexNumber nv, vertexNumber mv, const ThreeVector& dir,
+					 float& dlerr) const;                                      
+      float            getZDecayLength  (vertexNumber nv, vertexNumber mv,
+					 const Hep3Vector& dir, float& dlerr) const;  
+      float            getZDecayLength  (vertexNumber nv, vertexNumber mv,
+					 const ThreeVector& dir, float& dlerr) const;                                        
+      float            getImpactPar     (vertexNumber prdV, vertexNumber dcyV,
+					 const Hep3Vector &v, float &dxyerr) const;     
+      float            getImpactPar     (vertexNumber prdV, vertexNumber dcyV,
+					 const ThreeVector &v, float &dxyerr) const;                      
+      float            get_dr           (vertexNumber nv, vertexNumber mv, float& drerr) const;
+      float            get_dz           (vertexNumber nv, vertexNumber mv, float& dzerr) const;
+
       // return location of vertex
-      Hep3Vector       getVertexHep(vertexNumber nv) const;
-      ThreeVector      getVertex(vertexNumber nv) const;
+      Hep3Vector       getVertexHep     (vertexNumber nv) const;
+      ThreeVector      getVertex        (vertexNumber nv) const;
+
       // return error matrix element.
-      ThreeSymMatrix   getErrorMatrix(vertexNumber nv) const;
+      ThreeSymMatrix   getErrorMatrix   (vertexNumber nv) const;
       double           getErrorMatrixHep(int j, int k) const;
       HepSymMatrix     getErrorMatrixHep(vertexNumber nv) const;
       HepSymMatrix     getErrorMatrixHep(const int trkId) const;
-      void             getPosMomErr  (HepMatrix& errors) const;
-      int              vOff          (vertexNumber jv) const;
-      int              tOff          (const int trkId) const;
-      int              pOff          (int lp) const;
-      int              cOff          (int lc) const;
-      int              mOff          () const;
-      double           VMat          (int i, int j) const;
-      float            getPtError    (const int trkId) const;
-      MultiVertexFitter::vertexNumber
-      allocateVertexNumber();
+      void             getPosMomErr     (HepMatrix& errors) const;
+      int              vOff             (vertexNumber jv) const;
+      int              tOff             (const int trkId) const;
+      int              pOff             (int lp) const;
+      int              cOff             (int lc) const;
+      int              mOff             () const;
+      double           VMat             (int i, int j) const;
+      float            getPtError       (const int trkId) const;
+      MultiVertexFitterD::vertexNumber
+	allocateVertexNumber();
       void             resetAllocatedVertexNumber();
 
       // Accessors for getting information relative to ijk errors Get the error code from the three ijk
@@ -284,20 +229,20 @@ namespace mithep {
       //--------------------------------------------------------------------------------------------
       // Overload operators
       //--------------------------------------------------------------------------------------------
-      friend std::ostream& operator << (std::ostream& os, const MultiVertexFitter& vfit);
+      friend std::ostream& operator << (std::ostream& os, const MultiVertexFitterD& vfit);
 
     protected:
-      std::string      _expert;                 // string: name and email of MultiVertexFitter expert
-      int              _stat;                   // status returned from fit.
+      std::string      _expert;                  // string: name and email of expert
+      int              _stat;                    // status returned from fit
 
-      static const int _maxvtx = CTVMFT_MAXVTX; //  6;  // Maximum number of vertices
-      static const int _maxmcn = CTVMFT_MAXMCN; //  4;  // Maximum number of mass constraints
-      static const int _maxtrk = CTVMFT_MAXTRK; // 50;  // Maximum number of tracks
-      static const int _maxitr = CTVMFT_MAXITR; // 10;  // Maximum number of iteration steps
-      static const int _maxdim = 5*(CTVMFT_MAXVTX+1)+3*CTVMFT_MAXTRK+CTVMFT_MAXMCN;
+      static const int _maxvtx = DCTVMFT_MAXVTX; // Maximum number of vertices
+      static const int _maxmcn = DCTVMFT_MAXMCN; // Maximum number of mass constraints
+      static const int _maxtrk = DCTVMFT_MAXTRK; // Maximum number of tracks
+      static const int _maxitr = DCTVMFT_MAXITR; // Maximum number of iteration steps
+      static const int _maxdim = 5*(DCTVMFT_MAXVTX+1)+3*DCTVMFT_MAXTRK+DCTVMFT_MAXMCN;
 
-      // FIDDLE must have access to MultiVertexFitter's (other) protected data like _maxvtx, etc. It
-      // must therefore be a friend.
+      // FIDDLE must have access to protected data like _maxvtx, etc. It must therefore be a
+      // friend
       struct        FIDDLE;
       friend struct FIDDLE;
       struct FIDDLE {
@@ -305,7 +250,7 @@ namespace mithep {
           float  chisqmax;
       };
 
-      // CTVMQ must have access to MultiVertexFitter's (other) protected data like _maxvtx, etc. It
+      // CTVMQ must have access to MultiVertexFitterD's (other) protected data like _maxvtx, etc. It
       // must therefore be a friend.
       struct        CTVMQ;
       friend struct CTVMQ;
@@ -364,7 +309,7 @@ namespace mithep {
           float  pscale;
       };
 
-      // CTVMFR must have access to MultiVertexFitter's (other) protected data like _maxdim, etc. 
+      // CTVMFR must have access to MultiVertexFitterD's (other) protected data like _maxdim, etc. 
       // It must therefore be a friend.
       struct        CTVMFR;
       friend struct CTVMFR;
@@ -372,7 +317,7 @@ namespace mithep {
           double vmat[_maxdim+1][_maxdim];
       };
 
-      // TRKPRM must have access to MultiVertexFitter's (other) protected data like _maxtrk, etc.
+      // TRKPRM must have access to MultiVertexFitterD's (other) protected data like _maxtrk, etc.
       // It must therefore be a friend.
       struct        TRKPRM;
       friend struct TRKPRM;
@@ -419,23 +364,23 @@ namespace mithep {
 // Inline functions
 //--------------------------------------------------------------------------------------------------
 inline
-std::ostream& operator << (std::ostream& os, const mithep::MultiVertexFitter& vfit)
+std::ostream& operator << (std::ostream& os, const mithep::MultiVertexFitterD& vfit)
 {
   vfit.print(os);
   return    (os);
 }
 inline
-void mithep::MultiVertexFitter::setExcuse()
+void mithep::MultiVertexFitterD::setExcuse()
 {
   _fiddle.excuse = 1;   // the default
 }
 inline
-void mithep::MultiVertexFitter::setNoExcuse()
+void mithep::MultiVertexFitterD::setNoExcuse()
 {
   _fiddle.excuse = 0;   // crash on input error
 }
 inline
-void mithep::MultiVertexFitter::setChisqMax(const float chisqmx)
+void mithep::MultiVertexFitterD::setChisqMax(const float chisqmx)
 {
   _fiddle.chisqmax = chisqmx;
 }
