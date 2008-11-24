@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: MathUtils.h,v 1.2 2008/09/04 17:11:31 loizides Exp $
+// $Id: MathUtils.h,v 1.3 2008/09/10 03:27:34 loizides Exp $
 //
 // MathUtils
 //
@@ -18,12 +18,13 @@ namespace mithep
 {
   class MathUtils {
     public:
-      static double AddInQuadrature(double a, double b);  
-      static double DeltaPhi(double phi1, double phi2);
-      static double DeltaR(const FourVector &v1, const FourVector &v2);
-      static double DeltaR(double phi1, double eta1, double phi2, double eta2);
-      static double Eta2Theta(double eta);
-      static double Theta2Eta(double theta);
+      static Double_t AddInQuadrature(Double_t a, Double_t b);  
+      static Double_t DeltaPhi(Double_t phi1, Double_t phi2);
+      static Double_t DeltaPhi(const FourVector &v1, const FourVector &v2);
+      static Double_t DeltaR(Double_t phi1, Double_t eta1, Double_t phi2, Double_t eta2);
+      static Double_t DeltaR(const FourVector &v1, const FourVector &v2);
+      static Double_t Eta2Theta(Double_t eta);
+      static Double_t Theta2Eta(Double_t theta);
   };
 }
 #endif
