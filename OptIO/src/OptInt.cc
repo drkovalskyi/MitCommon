@@ -1,4 +1,4 @@
-// $Id: Types.cc,v 1.1 2008/09/27 05:44:11 loizides Exp $
+// $Id: OptInt.cc,v 1.1 2009/02/24 11:56:42 loizides Exp $
 
 #include "MitCommon/OptIO/interface/OptInt.h"
 #include <TROOT.h>
@@ -16,19 +16,53 @@ extern "C" void R__SetZipMode(int zipmode);
 extern double lzipfrac;
 extern double gzipfrac;
 extern double bzipfrac;
+extern double lzmafrac;
 extern int myverbose;
 extern int mystaticm;
 
 //--------------------------------------------------------------------------------------------------
-void OptInt::SetAlgoFractions(Double_t lzo, Double_t gz, Double_t bz)
+void OptInt::SetAlgoFractions(Double_t lzo, Double_t gz, Double_t bz, Double_t lzma)
 {
   // Fraction of compression that must be reached to accept result of the "heavy"
   // compression algorithm. Negative values turn of usage of the specific compression 
-  // algorithm in ZipMode=5.
+  // algorithm in ZipMode=99.
 
   lzipfrac = lzo;
   gzipfrac = gz;
   bzipfrac = bz;
+  lzmafrac = lzma;
+}
+
+//--------------------------------------------------------------------------------------------------
+void OptInt::SetBzipFraction(Double_t f)
+{
+  // Set fraction for compression algorithm, see description of SetAlgoFractions.
+
+  bzipfrac = f;
+}
+
+//--------------------------------------------------------------------------------------------------
+void OptInt::SetGzipFraction(Double_t f)
+{
+  // Set fraction for compression algorithm, see description of SetAlgoFractions.
+
+  gzipfrac = f;
+}
+
+//--------------------------------------------------------------------------------------------------
+void OptInt::SetLzmaFraction(Double_t f)
+{
+  // Set fraction for compression algorithm, see description of SetAlgoFractions.
+
+  lzmafrac = f;
+}
+
+//--------------------------------------------------------------------------------------------------
+void OptInt::SetLzoFraction(Double_t f)
+{
+  // Set fraction for compression algorithm, see description of SetAlgoFractions.
+
+  lzipfrac = f;
 }
 
 //--------------------------------------------------------------------------------------------------

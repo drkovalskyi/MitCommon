@@ -1,10 +1,12 @@
-// $Id: Types.cc,v 1.1 2008/09/27 05:44:11 loizides Exp $
+// $Id: rzipunzip.c,v 1.1 2009/02/24 11:56:44 loizides Exp $
 
 #include "MitCommon/OptIO/src/rzipunzip.h"
 #include "MitCommon/OptIO/src/zlib.h"
 #include "MitCommon/OptIO/src/bzlib.h"
 #include "MitCommon/OptIO/src/lzo/lzo1x.h"
 #include "MitCommon/OptIO/src/rle.h"
+#include "MitCommon/OptIO/src/LzmaEnc.h"
+#include "MitCommon/OptIO/src/LzmaDec.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,6 +34,7 @@ char *myptr = mymem;
 double lzipfrac = 1;
 double gzipfrac = 1;
 double bzipfrac = 1;
+double lzmafrac = 1;
 int myverbose = 0;
 int mystaticm = 0;
 
@@ -51,12 +54,17 @@ void *mymalloc(size_t size)
 }
  
 //--------------------------------------------------------------------------------------------------
-void myfree(void *ptr)
+void mymfree(void *ptr)
 {
   if (mystaticm && (char*)ptr>=mymem && (char*)ptr<mymem+MYSIZE)
     return;
   free(ptr);
 }
+
+// memory handle functions
+static void *SzAlloc(void *p, size_t size) { p = p; return mymalloc(size); }
+static void SzFree(void *p, void *address) { p = p; mymfree(address); }
+static ISzAlloc g_Alloc = { SzAlloc, SzFree };
 
 //--------------------------------------------------------------------------------------------------
 void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *irep)
@@ -82,7 +90,7 @@ void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *
   in_size      = (unsigned)(*srcsize); /* decompressed size */
   char *tgtptr = tgt+HDRSIZE;          /* compress data     */
 
-  if (R__ZipMode == 5) { /*determine best of all methods*/
+  if (R__ZipMode == 99) { /*determine best of all methods*/
     int cont = 1;
     int msize  = -1;
     int zmode  = -1;
@@ -114,16 +122,17 @@ void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *
             mdum = tmp;
           }
         }
-        myfree(lwmem);
+        mymfree(lwmem);
       }
     }
 
     if (cont && gzipfrac>0) {
+      int outlen = *tgtsize;
       z_stream stream;
       stream.next_in   = (Bytef*)src;
       stream.avail_in  = (uInt)(in_size);
       stream.next_out  = (Bytef*)(mdum);
-      stream.avail_out = (uInt)(*tgtsize);
+      stream.avail_out = (uInt)(outlen);
       stream.zalloc    = (alloc_func)0;
       stream.zfree     = (free_func)0;
       stream.opaque    = (voidpf)0;
@@ -146,11 +155,12 @@ void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *
     }
 
     if (cont && bzipfrac>0) {
+      int outlen = *tgtsize;
       bz_stream stream;
       stream.next_in   = src;
       stream.avail_in  = (uInt)(in_size);
       stream.next_out  = mdum;
-      stream.avail_out = (uInt)(*tgtsize);
+      stream.avail_out = (uInt)(outlen);
       stream.bzalloc = 0;
       stream.bzfree  = 0;
       stream.opaque  = 0;
@@ -171,7 +181,33 @@ void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *
         }
       }
     }
+    if (cont && lzmafrac>0) {
+      CLzmaEncHandle enc = LzmaEnc_Create(&g_Alloc);
+      if (enc) {
+        CLzmaEncProps props;
+        LzmaEncProps_Init(&props);
+        props.level = cxlevel;
+        props.dictSize = (1<<16);
+        SRes res = LzmaEnc_SetProps(enc, &props);
+        if (res == SZ_OK) {
+          SizeT outlen = *tgtsize;
+          res = LzmaEnc_MemEncode(enc, tgtptr, &outlen, src, in_size,
+                                  0, NULL, &g_Alloc, &g_Alloc);
+          if (res == SZ_OK) {
+            LzmaEnc_Destroy(enc, &g_Alloc, &g_Alloc);
+            if (outlen<lzmafrac*msize) {
+              msize = outlen;
+              zmode = 5;
+              char *tmp = mptr;
+              mptr = mdum;
+              mdum = tmp;
+            }
+          }
+        }
+      }
+    }
 
+    // determine best candidate
     if (msize>=in_size) {
       out_size = in_size;
       memcpy(tgtptr,src,out_size);
@@ -199,13 +235,51 @@ void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *
           tgt[0] = 'R'; /* signature rlelib */
           tgt[1] = 'E';
           method = 4;
+        case 5:
+          tgt[0] = 'L'; /* signature lzma */
+          tgt[1] = 'M';
+          method = 3;
           break;
       }
       out_size = msize;
       memcpy(tgtptr,mptr,out_size);
     }
-    myfree(mptr1);
-    myfree(mptr2);
+    mymfree(mptr1);
+    mymfree(mptr2);
+  } else if (R__ZipMode == 5) { /*lzma*/
+    CLzmaEncHandle enc = LzmaEnc_Create(&g_Alloc);
+    if (enc == 0) {
+      printf("error %d - LzmaEnc_Create()\n", SZ_ERROR_MEM);
+      return;
+    }
+    CLzmaEncProps props;
+    LzmaEncProps_Init(&props);
+    props.level = cxlevel;
+    props.dictSize = (1<<16);
+    SRes res = LzmaEnc_SetProps(enc, &props);
+    if (res != SZ_OK) {
+      printf("error %d - LzmaEnc_SetProps()\n", res);
+      return;
+    }
+    res = LzmaEnc_MemEncode(enc, tgtptr, tgtsize, src, in_size,
+                            0, NULL, &g_Alloc, &g_Alloc);
+    if (res != SZ_OK) {
+      printf("error %d - LzmaEnc_MemEncode", res);
+      return;
+    }
+    LzmaEnc_Destroy(enc, &g_Alloc, &g_Alloc);
+    out_size  = *tgtsize; /* compressed size */
+    if (out_size>=lzmafrac*in_size) {
+      out_size = in_size;
+      memcpy(tgtptr,src,out_size);
+      tgt[0] = 'X'; /* signature xx */
+      tgt[1] = 'X';
+      method = 0;
+    } else {
+      tgt[0] = 'L'; /* signature lzma */
+      tgt[1] = 'M';
+      method = 3;
+    }
   } else if (R__ZipMode == 4) { /*rle*/
     int tgtlen = 2*in_size+1;
     char *lmem1 = mymalloc(tgtlen);
@@ -223,12 +297,12 @@ void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *
       tgt[1] = 'E';
       method = 4;
     }
-    myfree(lmem1);
+    mymfree(lmem1);
   } else if (R__ZipMode == 3) { /*lzo*/
     err = lzo_init(); 
     if ( err != LZO_E_OK) {
       printf("error %d - lzo_init()\n", err);
-        return;
+      return;
     }
 
     lzo_uint tgtlen = 2*in_size+64*1024;
@@ -252,8 +326,8 @@ void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *
       method = 19;
     } 
     if (err != LZO_E_OK) {
-      myfree(lmem1);
-      myfree(lmem2);
+      mymfree(lmem1);
+      mymfree(lmem2);
       return;
     }
 
@@ -269,8 +343,8 @@ void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *
       tgt[0] = 'L'; /* signature lzolib */
       tgt[1] = 'O';
     }
-    myfree(lmem1);
-    myfree(lmem2);
+    mymfree(lmem1);
+    mymfree(lmem2);
   } else if (R__ZipMode == 2) { /*bzip*/
     bz_stream stream;
     stream.next_in   = src;
@@ -384,14 +458,15 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
   }
 
   char method = src[2];
-  if (method!=0 && method!=2 && method!=4 && method!=Z_DEFLATED && method!=11
-      && method!=12 && method!=15 && method!=19) {
+  if (method!=0  && method!= 2 && method!= 3 && method!= 4 && method!=Z_DEFLATED && 
+      method!=11 && method!=12 && method!=15 && method!=19) {
     fprintf(stderr,"R__unzip: error in header -> unknown method %d\n", method);
     return;
   }
 
   if ((method==0          &&  (src[0] != 'X' || src[1] != 'X'))    ||
       (method==2          &&  (src[0] != 'B' || src[1] != 'Z'))    ||
+      (method==3          &&  (src[0] != 'L' || src[1] != 'M'))    ||
       (method==4          &&  (src[0] != 'R' || src[1] != 'E'))    ||
       (method==Z_DEFLATED && ((src[0] != 'C' || src[1] != 'S') && 
                               (src[0] != 'Z' || src[1] != 'L')))   ||
@@ -435,7 +510,37 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
   }
 
   /*   D E C O M P R E S S   D A T A  */
-  if (src[0] == 'R' && src[1] == 'E') { /* rle format */
+
+  if (src[0] == 'L' && src[1] == 'M') { /* lzma format */
+    CLzmaEncHandle enc = LzmaEnc_Create(&g_Alloc);
+    if (enc == 0) {
+      printf("error %d - LzmaEnc_Create()\n", SZ_ERROR_MEM);
+      return;
+    }
+    CLzmaEncProps props;
+    LzmaEncProps_Init(&props);
+    //props.level = cxlevel;
+    props.dictSize = (1<<16);
+    SRes res = LzmaEnc_SetProps(enc, &props);
+    if (res != SZ_OK) {
+      printf("error %d - LzmaEnc_SetProps()\n", res);
+      return;
+    }
+    size_t hsize = LZMA_PROPS_SIZE;
+    char *hptr = mymalloc(hsize);
+    res = LzmaEnc_WriteProperties(enc, hptr, &hsize);
+    if (res != SZ_OK) {
+      printf("error %d - LzmaEnc_WriteProperties()\n", res);
+      return;
+    }
+
+    SizeT new_len = obufcnt;
+    ELzmaStatus status;
+    res = LzmaDecode(obufptr, &obufcnt, ibufptr, &new_len, hptr, hsize, 
+                     LZMA_FINISH_END, &status, &g_Alloc);
+    mymfree(hptr);
+    *irep = obufcnt;
+  } else if (src[0] == 'R' && src[1] == 'E') { /* rle format */
     RLE_Uncompress(ibufptr, obufptr, ibufcnt);
     *irep = obufcnt;
     return;
