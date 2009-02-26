@@ -1,9 +1,35 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: OptInt.h,v 1.1 2009/02/24 11:56:42 loizides Exp $
+// $Id: OptInt.h,v 1.2 2009/02/24 20:13:56 loizides Exp $
 //
 // OptInt
 //
 // Interface to set some of the optimized IO parameters.
+//
+// The following zip modes are supported:
+//   Set ZipMode to be used in R__zip. Supported values range from 1 to 5, where
+//    1 == gzip  (http://www.gzip.org/, standard in ROOT)
+//    2 == bzip2 (http://www.bzip.org/)
+//    3 == lzo   (http://www.oberhumer.com/opensource/lzo/)
+//    4 == rle   (http://bcl.comli.eu/)
+//    5 == lzma  (http://www.7-zip.org/sdk.html)
+//    99 == combination of 1 to 5.
+// 
+// Additionally you can specify the compression fraction that must be reached to accept result of 
+// the "heavy" compression algorithms. Negative values turn off usage of the specific compression 
+// algorithm in ZipMode=99.
+//
+// In order to make use of all of this, make sure you preload MitCommonOptIO.so. This can be 
+// achieved by setting LD_PRELOAD to $CMSSW_BASE/lib/$SCRAM_ARCH/libMitCommonOptIO.so.
+// 
+// In additon, you can use .rootrc, for example like
+//  Root.ZipMode: 5
+//  Root.OptIO.Verbose: 0
+//  Root.OptIO.SMalloc: 0
+//  Root.OptIO.LzoFraction:  1
+//  Root.OptIO.GzipFraction: 1
+//  Root.OptIO.BzipFraction: 1
+//  Root.OptIO.LzmaFraction: 1
+// 
 //
 // Authors: C.Loizides
 //--------------------------------------------------------------------------------------------------
