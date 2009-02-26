@@ -1,4 +1,4 @@
-// $Id: rzipunzip.c,v 1.2 2009/02/24 20:13:57 loizides Exp $
+// $Id: rzipunzip.c,v 1.3 2009/02/25 10:54:40 loizides Exp $
 
 #include "MitCommon/OptIO/src/rzipunzip.h"
 #include "MitCommon/OptIO/src/zlib.h"
@@ -7,6 +7,7 @@
 #include "MitCommon/OptIO/src/rle.h"
 #include "MitCommon/OptIO/src/LzmaEnc.h"
 #include "MitCommon/OptIO/src/LzmaDec.h"
+#include "MitCommon/OptIO/src/fpc.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -109,7 +110,6 @@ void delta_decode(char *buffer, int length)
   }
 }
 
-
 //--------------------------------------------------------------------------------------------------
 void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *irep)
      /* int cxlevel;                      compression level */
@@ -135,10 +135,10 @@ void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *
   char *tgtptr = tgt+HDRSIZE;          /* compress data     */
 
   if (R__ZipMode == 99) { /*determine best of all methods*/
-    int cont = 1;
-    int msize  = -1;
-    int zmode  = -1;
-    int tgtlen = 2*in_size+64*1024;
+    int cont    = 1;
+    int msize   = -1;
+    int zmode   = -1;
+    int tgtlen  = 2*in_size+64*1024;
     char *mptr1 = mymalloc(tgtlen);
     char *mptr2 = mymalloc(tgtlen);
     char *mptr  = 0;
@@ -561,16 +561,15 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
   if (src[0] == 'L' && src[1] == 'M') { /* lzma format */
     CLzmaEncHandle enc = LzmaEnc_Create(&g_Alloc);
     if (enc == 0) {
-      printf("error %d - LzmaEnc_Create()\n", SZ_ERROR_MEM);
+      printf("error %d - LzmaEnc_Create (lzma)\n", SZ_ERROR_MEM);
       return;
     }
     CLzmaEncProps props;
     LzmaEncProps_Init(&props);
-    //props.level = cxlevel;
     props.dictSize = (1<<16);
     SRes res = LzmaEnc_SetProps(enc, &props);
     if (res != SZ_OK) {
-      printf("error %d - LzmaEnc_SetProps()\n", res);
+      printf("error %d - LzmaEnc_SetProps (lzma)\n", res);
       LzmaEnc_Destroy(enc, &g_Alloc, &g_Alloc);
       return;
     }
@@ -578,7 +577,7 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
     char *hptr = mymalloc(hsize);
     res = LzmaEnc_WriteProperties(enc, hptr, &hsize);
     if (res != SZ_OK) {
-      printf("error %d - LzmaEnc_WriteProperties()\n", res);
+      printf("error %d - LzmaEnc_WriteProperties (lzma)\n", res);
       mymfree(hptr);
       LzmaEnc_Destroy(enc, &g_Alloc, &g_Alloc);
       return;
@@ -588,6 +587,11 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
     ELzmaStatus status;
     res = LzmaDecode(obufptr, &obufcnt, ibufptr, &new_len, hptr, hsize, 
                      LZMA_FINISH_END, &status, &g_Alloc);
+    if (res!=SZ_OK) {
+      fprintf(stderr,"R__unzip: error %d in LzmaDecode (lzolib)\n", res);
+      mymfree(hptr);
+      return;
+    }
     mymfree(hptr);
     LzmaEnc_Destroy(enc, &g_Alloc, &g_Alloc);
     *irep = obufcnt;
@@ -615,8 +619,8 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
     stream.avail_in  = ibufcnt;
     stream.next_out  = obufptr;
     stream.avail_out = obufcnt;
-    stream.bzalloc   = 0;//my_balloc;
-    stream.bzfree    = 0;//my_bfree;
+    stream.bzalloc   = my_balloc;
+    stream.bzfree    = my_bfree;
     stream.opaque    = 0;
 
     int err = BZ2_bzDecompressInit(&stream,0,0);
@@ -638,8 +642,8 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
     stream.avail_in  = (uInt)(*srcsize);
     stream.next_out  = (Bytef*)tgt;
     stream.avail_out = (uInt)(*tgtsize);
-    stream.zalloc = 0; // my_zalloc;
-    stream.zfree  = 0; //my_zfree;
+    stream.zalloc    = my_zalloc;
+    stream.zfree     = my_zfree;
     stream.opaque    = (voidpf)0;
 
     int err = inflateInit(&stream);
