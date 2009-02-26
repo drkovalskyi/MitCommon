@@ -1,4 +1,4 @@
-// $Id: OptInt.cc,v 1.1 2009/02/24 11:56:42 loizides Exp $
+// $Id: OptInt.cc,v 1.2 2009/02/24 20:13:57 loizides Exp $
 
 #include "MitCommon/OptIO/interface/OptInt.h"
 #include <TROOT.h>
@@ -24,7 +24,7 @@ extern int mystaticm;
 void OptInt::SetAlgoFractions(Double_t lzo, Double_t gz, Double_t bz, Double_t lzma)
 {
   // Fraction of compression that must be reached to accept result of the "heavy"
-  // compression algorithm. Negative values turn of usage of the specific compression 
+  // compression algorithms. Negative values turn off usage of the specific compression 
   // algorithm in ZipMode=99.
 
   lzipfrac = lzo;
@@ -91,7 +91,8 @@ void OptInt::SetZipMode(Int_t zipmode)
   //  2 == bzip2 (http://www.bzip.org/)
   //  3 == lzo   (http://www.oberhumer.com/opensource/lzo/)
   //  4 == rle   (http://bcl.comli.eu/)
-  //  5 == combination of 1 to 4.
+  //  5 == lzma  (http://www.7-zip.org/sdk.html)
+  //  99 == combination of 1 to 5.
 
   R__SetZipMode(zipmode);
 }
