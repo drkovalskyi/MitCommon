@@ -1,4 +1,4 @@
-// $Id: rzipunzip.c,v 1.3 2009/02/25 10:54:40 loizides Exp $
+// $Id: rzipunzip.c,v 1.4 2009/02/26 14:35:15 loizides Exp $
 
 #include "MitCommon/OptIO/src/rzipunzip.h"
 #include "MitCommon/OptIO/src/zlib.h"
@@ -231,7 +231,9 @@ void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *
         CLzmaEncProps props;
         LzmaEncProps_Init(&props);
         props.level = cxlevel;
-        props.dictSize = (1<<16);
+        props.dictSize = (1<<24);
+        props.lc = 0;
+        props.lp = 2;
         SRes res = LzmaEnc_SetProps(enc, &props);
         if (res == SZ_OK) {
           SizeT outlen = *tgtsize;
@@ -300,7 +302,9 @@ void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *
     CLzmaEncProps props;
     LzmaEncProps_Init(&props);
     props.level = cxlevel;
-    props.dictSize = (1<<16);
+    props.dictSize = (1<<24);
+    props.lc = 0;
+    props.lp = 2;
     SRes res = LzmaEnc_SetProps(enc, &props);
     if (res != SZ_OK) {
       printf("error %d - LzmaEnc_SetProps()\n", res);
@@ -566,7 +570,9 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
     }
     CLzmaEncProps props;
     LzmaEncProps_Init(&props);
-    props.dictSize = (1<<16);
+    props.dictSize = (1<<24);
+    props.lc = 0;
+    props.lp = 2;
     SRes res = LzmaEnc_SetProps(enc, &props);
     if (res != SZ_OK) {
       printf("error %d - LzmaEnc_SetProps (lzma)\n", res);
