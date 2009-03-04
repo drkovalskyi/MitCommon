@@ -1,4 +1,4 @@
-// $Id: OptInt.cc,v 1.2 2009/02/24 20:13:57 loizides Exp $
+// $Id: OptInt.cc,v 1.3 2009/02/26 16:18:07 loizides Exp $
 
 #include "MitCommon/OptIO/interface/OptInt.h"
 #include <TROOT.h>
@@ -13,12 +13,21 @@ using namespace mithep;
 
 extern "C" void R__SetZipMode(int zipmode);
 
+extern int activated;
 extern double lzipfrac;
 extern double gzipfrac;
 extern double bzipfrac;
 extern double lzmafrac;
 extern int myverbose;
 extern int mystaticm;
+
+//--------------------------------------------------------------------------------------------------
+Bool_t OptInt::IsActivated()
+{
+  // Return true if code was properly pre-loaded.
+
+  return (activated==123);
+}
 
 //--------------------------------------------------------------------------------------------------
 void OptInt::SetAlgoFractions(Double_t lzo, Double_t gz, Double_t bz, Double_t lzma)

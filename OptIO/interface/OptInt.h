@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: OptInt.h,v 1.3 2009/02/26 16:18:07 loizides Exp $
+// $Id: OptInt.h,v 1.4 2009/02/26 16:18:46 loizides Exp $
 //
 // OptInt
 //
@@ -45,14 +45,15 @@ namespace mithep
     public:
       OptInt() {}
 
-      static void SetAlgoFractions(Double_t lzo, Double_t gz, Double_t bz, Double_t lzma);
-      static void SetBzipFraction(Double_t f);
-      static void SetGzipFraction(Double_t f);
-      static void SetLzmaFraction(Double_t f);
-      static void SetLzoFraction(Double_t f);
-      static void SetStaticMalloc(Bool_t b);
-      static void SetVerbose(Int_t vl);
-      static void SetZipMode(Int_t zm);
+      static Bool_t IsActivated();
+      static void   SetAlgoFractions(Double_t lzo, Double_t gz, Double_t bz, Double_t lzma);
+      static void   SetBzipFraction(Double_t f);
+      static void   SetGzipFraction(Double_t f);
+      static void   SetLzmaFraction(Double_t f);
+      static void   SetLzoFraction(Double_t f);
+      static void   SetStaticMalloc(Bool_t b);
+      static void   SetVerbose(Int_t vl);
+      static void   SetZipMode(Int_t zm);
 
     ClassDef(OptInt, 0) // Interface to OptIO parameters
   };

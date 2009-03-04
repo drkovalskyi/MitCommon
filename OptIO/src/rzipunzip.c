@@ -1,4 +1,4 @@
-// $Id: rzipunzip.c,v 1.4 2009/02/26 14:35:15 loizides Exp $
+// $Id: rzipunzip.c,v 1.5 2009/02/27 17:39:30 bendavid Exp $
 
 #include "MitCommon/OptIO/src/rzipunzip.h"
 #include "MitCommon/OptIO/src/zlib.h"
@@ -30,6 +30,9 @@ typedef unsigned char uch;  /* code assumes unsigned bytes; these type- */
 extern int R__ZipMode;
 char mymem[MYSIZE];
 char *myptr = mymem;
+
+// the following will be set to one if code was activated
+int activated = 0;
 
 // the following can be changed using the OptInt interface
 double lzipfrac = 1;
