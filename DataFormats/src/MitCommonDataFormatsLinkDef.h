@@ -1,9 +1,12 @@
-// $Id: MitAnaDataTreeLinkDef.h,v 1.38 2008/09/19 11:58:03 bendavid Exp $
+// $Id: MitCommonDataFormatsLinkDef.h,v 1.1 2008/09/27 05:44:11 loizides Exp $
 
 #ifndef MITCOMMON_DATAFORMATS_LINKDEF_H
 #define MITCOMMON_DATAFORMATS_LINKDEF_H
 
 #include "MitCommon/DataFormats/interface/Types.h"
+#include "MitCommon/DataFormats/interface/Vect3.h"
+#include "MitCommon/DataFormats/interface/Vect3C.h"
+#include "MitCommon/DataFormats/interface/Vect4M.h"
 #endif
 
 #ifdef __CINT__
@@ -33,4 +36,7 @@
 #pragma link C++ typedef mithep::ThreeMatrix32;
 #pragma link C++ typedef mithep::SevenMatrix32;
 
+#pragma link C++ class mithep::Vect3+;
+#pragma link C++ class mithep::Vect3C+;
+#pragma link C++ class mithep::Vect4M+;
 #endif
