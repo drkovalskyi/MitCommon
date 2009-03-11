@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Vect4M.h,v 1.1 2009/03/03 17:03:54 loizides Exp $
+// $Id: Vect4M.h,v 1.1 2009/03/08 12:00:54 loizides Exp $
 //
 // Vect4M
 //
@@ -31,6 +31,7 @@ namespace mithep
       Double_t            Phi()        const { return fPhi; }
       Double_t            Pt()         const { return fPt; }
       Double_t            M()          const { return fM; }
+      void                Set(Double_t pt, Double_t eta, Double_t phi, Double_t m);
       void                SetXYZT(Double_t px, Double_t py, Double_t pz, Double_t e);
       const FourVectorM   V()          const { return FourVectorM(fPt,fEta,fPhi,fM); }
 
@@ -45,14 +46,25 @@ namespace mithep
 }
 
 //--------------------------------------------------------------------------------------------------
+inline void mithep::Vect4M::Set(Double_t pt, Double_t eta, Double_t phi, Double_t m)
+{ 
+  // Set four vector.
+
+  fPt  = pt;
+  fEta = eta;
+  fPhi = phi;
+  fM   = m;
+}
+
+//--------------------------------------------------------------------------------------------------
 inline void mithep::Vect4M::SetXYZT(Double_t px, Double_t py, Double_t pz, Double_t e)
 { 
   // Set four vector.
 
   FourVector tmp(px, py, pz, e);
-  fPt=tmp.Pt();
-  fEta=tmp.Eta();
-  fPhi=tmp.Phi();
-  fM=tmp.M();
+  fPt  = tmp.Pt();
+  fEta = tmp.Eta();
+  fPhi = tmp.Phi();
+  fM   = tmp.M();
 }
 #endif
