@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Vect3C.h,v 1.1 2009/03/03 17:03:54 loizides Exp $
+// $Id: Vect3C.h,v 1.1 2009/03/08 12:00:54 loizides Exp $
 //
 // Vect3C
 //
@@ -34,9 +34,9 @@ namespace mithep
       void                SetXYZ(Double_t x, Double_t y, Double_t z);
 
     protected:
-      Double32_t          fRho; //[0,0,12]
-      Double32_t          fEta; //[0,0,10]
-      Double32_t          fPhi; //[0,0,10]
+      Double32_t          fRho; //[0,0,12]rho-component
+      Double32_t          fEta; //[0,0,10]eta-component
+      Double32_t          fPhi; //[0,0,10]phi-component
 
     ClassDef(Vect3C, 1)
   };

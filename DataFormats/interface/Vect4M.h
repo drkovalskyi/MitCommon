@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Vect4M.h,v 1.1 2009/03/08 12:00:54 loizides Exp $
+// $Id: Vect4M.h,v 1.2 2009/03/11 10:09:45 loizides Exp $
 //
 // Vect4M
 //
@@ -36,10 +36,10 @@ namespace mithep
       const FourVectorM   V()          const { return FourVectorM(fPt,fEta,fPhi,fM); }
 
     protected:
-      Double32_t          fPt;  //[0,0,12]
-      Double32_t          fEta; //[0,0,10]
-      Double32_t          fPhi; //[0,0,10]
-      Double32_t          fM;   //[0,0,12]
+      Double32_t          fPt;  //[0,0,12]pt-component
+      Double32_t          fEta; //[0,0,10]eta-component
+      Double32_t          fPhi; //[0,0,10]phi-component
+      Double32_t          fM;   //[0,0,12]mass-component
 
     ClassDef(Vect4M, 1) // Implementation of our own FourVectorM32
   };
