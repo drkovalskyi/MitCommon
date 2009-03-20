@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Vect3.h,v 1.1 2009/03/08 12:00:54 loizides Exp $
+// $Id: Vect3.h,v 1.2 2009/03/16 20:29:11 loizides Exp $
 //
 // Vect3C
 //
@@ -30,7 +30,7 @@ namespace mithep
       Double_t            X()          const { return fX; }
       Double_t            Y()          const { return fY; }
       Double_t            Z()          const { return fZ; }
-      const ThreeVector   V()          const { return ThreeVector(fX,fY,fZ); }
+      ThreeVector         V()          const { return ThreeVector(fX,fY,fZ); }
       void                SetXYZ(Double_t x, Double_t y, Double_t z);
 
     protected:
