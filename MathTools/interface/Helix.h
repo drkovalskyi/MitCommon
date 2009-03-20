@@ -1,12 +1,13 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Helix.h,v 1.4 2008/09/14 15:28:19 loizides Exp $
+// $Id: Helix.h,v 1.1 2008/09/17 04:01:50 loizides Exp $
 //
 // Class Helix
 //
 // Implementation nof a general helix class with a set of tools for working with objects like 
 // tracks and finding intersections (vertices).
 //
-// Author: C.Paus, stolen and adjusted from CDF implementation of Kurt Rinnert
+// Author: C.Paus (stolen and adjusted from CDF implementation of Kurt Rinnert,
+//                 therefore not all our coding conventions fulfilled) 
 //--------------------------------------------------------------------------------------------------
 
 #ifndef MITCOMMON_MATHTOOLS_HELIX_H
@@ -133,13 +134,15 @@ namespace mithep {
   
       // Needed whenever fSs or fCc are used.
       inline void      fCacheSinesAndCosines(double s) const;
-  
   };
 }
 
-// Update fSinTheta,fCosTheta,fSinPhi0, and fCosPhi0
+//--------------------------------------------------------------------------------------------------
 inline
-void mithep::Helix::fRefreshCache() const {
+void mithep::Helix::fRefreshCache() const 
+{
+  // Update fSinTheta,fCosTheta,fSinPhi0, and fCosPhi0
+
   if (fIsStale) {
     fIsStale=false;
     double theta;
@@ -170,9 +173,12 @@ void mithep::Helix::fRefreshCache() const {
   }
 }
 
-// Update fS, fAa, fSs, and fCc if the arclength has changed.
+//--------------------------------------------------------------------------------------------------
 inline
-void mithep::Helix::fCacheSinesAndCosines(double s) const {
+void mithep::Helix::fCacheSinesAndCosines(double s) const 
+{
+  // Update fS, fAa, fSs, and fCc if the arclength has changed.
+
   fRefreshCache();
   if (fS!=s){
     fS=s;
@@ -189,6 +195,7 @@ void mithep::Helix::fCacheSinesAndCosines(double s) const {
 }
 
 
+//--------------------------------------------------------------------------------------------------
 inline
 mithep::Helix::Helix() :
   fCotTheta(0.0),
@@ -212,6 +219,7 @@ mithep::Helix::Helix() :
 {
 }
 
+//--------------------------------------------------------------------------------------------------
 inline
 mithep::Helix::Helix(const Helix &right) :
   fCotTheta(right.fCotTheta),
@@ -237,6 +245,7 @@ mithep::Helix::Helix(const Helix &right) :
     fVParameters=new TVector(*(right.fVParameters));
 }
 
+//--------------------------------------------------------------------------------------------------
 inline
 mithep::Helix::Helix(double cotTheta,double curvature,double z0,double d0, Angle  phi0) :
   fCotTheta(cotTheta),
@@ -260,10 +269,12 @@ mithep::Helix::Helix(double cotTheta,double curvature,double z0,double d0, Angle
 {
 }
 
-// Assign helix and cache
+//--------------------------------------------------------------------------------------------------
 inline
 const mithep::Helix & mithep::Helix::operator=(const mithep::Helix &right)
 {
+  // Assign helix and cache
+
   if (this != &right) {
     fCotTheta=right.fCotTheta;
     fCurvature=right.fCurvature;
@@ -291,6 +302,7 @@ const mithep::Helix & mithep::Helix::operator=(const mithep::Helix &right)
   return *this;
 }
 
+//--------------------------------------------------------------------------------------------------
 inline
 void mithep::Helix::SetCotTheta(double cotTheta)
 {
@@ -298,6 +310,7 @@ void mithep::Helix::SetCotTheta(double cotTheta)
   fIsStale=true;
 }
 
+//--------------------------------------------------------------------------------------------------
 inline
 void mithep::Helix::SetZ0(double z0)
 {
@@ -305,6 +318,7 @@ void mithep::Helix::SetZ0(double z0)
   fIsStale=true;
 }
 
+//--------------------------------------------------------------------------------------------------
 inline
 void mithep::Helix::SetCurvature(double curvature)
 {
@@ -312,6 +326,7 @@ void mithep::Helix::SetCurvature(double curvature)
   fIsStale=true;
 }
 
+//--------------------------------------------------------------------------------------------------
 inline
 void mithep::Helix::SetD0(double d0)
 {
@@ -319,6 +334,7 @@ void mithep::Helix::SetD0(double d0)
   fIsStale=true;
 }
 
+//--------------------------------------------------------------------------------------------------
 inline
 void mithep::Helix::SetPhi0(Angle phi0)
 {
@@ -326,6 +342,7 @@ void mithep::Helix::SetPhi0(Angle phi0)
   fIsStale=true;
 }
 
+//--------------------------------------------------------------------------------------------------
 inline
 void mithep::Helix::SetParameters(const TVector &p)
 {
@@ -341,6 +358,7 @@ void mithep::Helix::SetParameters(const TVector &p)
   fIsStale = true;
 }
 
+//--------------------------------------------------------------------------------------------------
 inline
 const TVector & mithep::Helix::Parameters() const
 {
@@ -354,8 +372,10 @@ const TVector & mithep::Helix::Parameters() const
   return *fVParameters;;
 }
  
+//--------------------------------------------------------------------------------------------------
 inline
-mithep::Helix mithep::Helix::create(const TVector & v)  {
+mithep::Helix mithep::Helix::create(const TVector & v)  
+{
   return mithep::Helix(v(1),v(2),v(3),v(4),v(5));
 }
 #endif

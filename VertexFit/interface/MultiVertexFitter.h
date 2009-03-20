@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: MultiVertexFitter.h,v 1.3 2008/11/13 16:34:28 paus Exp $
+// $Id: MultiVertexFitter.h,v 1.4 2008/11/13 16:54:07 paus Exp $
 //
 // MultiVertexFitter class header file
 //
@@ -241,11 +241,11 @@ namespace mithep {
       float            getZDecayLength(vertexNumber nv, vertexNumber mv,
                                       const Hep3Vector& dir, float& dlerr) const;  
       float            getZDecayLength(vertexNumber nv, vertexNumber mv,
-                                      const ThreeVector& dir, float& dlerr) const;                                        
+                                      const ThreeVector& dir, float& dlerr) const;                   
       float            getImpactPar(vertexNumber prdV, vertexNumber dcyV,
                                       const Hep3Vector &v, float &dxyerr) const;     
       float            getImpactPar(vertexNumber prdV, vertexNumber dcyV,
-                                      const ThreeVector &v, float &dxyerr) const;                      
+                                      const ThreeVector &v, float &dxyerr) const;                  
       float            get_dr(vertexNumber nv, vertexNumber mv, float& drerr) const;
       float            get_dz(vertexNumber nv, vertexNumber mv, float& dzerr) const;
       // return location of vertex
@@ -425,16 +425,22 @@ std::ostream& operator << (std::ostream& os, const mithep::MultiVertexFitter& vf
   vfit.print(os);
   return    (os);
 }
+
+//--------------------------------------------------------------------------------------------------
 inline
 void mithep::MultiVertexFitter::setExcuse()
 {
   _fiddle.excuse = 1;   // the default
 }
+
+//--------------------------------------------------------------------------------------------------
 inline
 void mithep::MultiVertexFitter::setNoExcuse()
 {
   _fiddle.excuse = 0;   // crash on input error
 }
+
+//--------------------------------------------------------------------------------------------------
 inline
 void mithep::MultiVertexFitter::setChisqMax(const float chisqmx)
 {

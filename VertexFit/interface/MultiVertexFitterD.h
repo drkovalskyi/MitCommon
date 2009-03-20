@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: $
+// $Id: MultiVertexFitterD.h,v 1.1 2008/11/13 16:34:28 paus Exp $
 //
 // MultiVertexFitterD class header file
 //
@@ -183,7 +183,7 @@ namespace mithep {
       float            getZDecayLength  (vertexNumber nv, vertexNumber mv,
 					 const Hep3Vector& dir, float& dlerr) const;  
       float            getZDecayLength  (vertexNumber nv, vertexNumber mv,
-					 const ThreeVector& dir, float& dlerr) const;                                        
+					 const ThreeVector& dir, float& dlerr) const;
       float            getImpactPar     (vertexNumber prdV, vertexNumber dcyV,
 					 const Hep3Vector &v, float &dxyerr) const;     
       float            getImpactPar     (vertexNumber prdV, vertexNumber dcyV,
@@ -212,15 +212,16 @@ namespace mithep {
 	allocateVertexNumber();
       void             resetAllocatedVertexNumber();
 
-      // Accessors for getting information relative to ijk errors Get the error code from the three ijk
-      // indexes into the argument variables
+      // Accessors for getting information relative to ijk errors.
+      // Get the error code from the three ijk indexes into the argument variables.
       void             getIJKErr(int& err0, int& err1, int& err2) const;
       // Return each error code from the three ijk indexes
       int              getIJKErr0() const;
       int              getIJKErr1() const;
       int              getIJKErr2() const;
 
-      // Get the track-id of the track causing a fatal error as indicated by the corresponding ijk error
+      // Get the track-id of the track causing a fatal error as indicated 
+      // by the corresponding ijk error
       int              getErrTrackId() const;
 
       // Set new track reference point
@@ -250,8 +251,8 @@ namespace mithep {
           float  chisqmax;
       };
 
-      // CTVMQ must have access to MultiVertexFitterD's (other) protected data like _maxvtx, etc. It
-      // must therefore be a friend.
+      // CTVMQ must have access to MultiVertexFitterD's (other) protected data like _maxvtx, etc.
+      // It must therefore be a friend.
       struct        CTVMQ;
       friend struct CTVMQ;
       struct        CTVMQ {
@@ -369,16 +370,22 @@ std::ostream& operator << (std::ostream& os, const mithep::MultiVertexFitterD& v
   vfit.print(os);
   return    (os);
 }
+
+//--------------------------------------------------------------------------------------------------
 inline
 void mithep::MultiVertexFitterD::setExcuse()
 {
   _fiddle.excuse = 1;   // the default
 }
+
+//--------------------------------------------------------------------------------------------------
 inline
 void mithep::MultiVertexFitterD::setNoExcuse()
 {
   _fiddle.excuse = 0;   // crash on input error
 }
+
+//--------------------------------------------------------------------------------------------------
 inline
 void mithep::MultiVertexFitterD::setChisqMax(const float chisqmx)
 {

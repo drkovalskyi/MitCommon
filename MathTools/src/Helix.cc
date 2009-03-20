@@ -1,9 +1,11 @@
-// $Id: Helix.cc,v 1.2 2008/09/04 13:55:30 loizides Exp $
+// $Id: Helix.cc,v 1.1 2008/09/17 04:01:50 loizides Exp $
 
 #include "MitCommon/MathTools/interface/Helix.h"
+#include <TSystem.h>
 
 using namespace mithep;
 
+//--------------------------------------------------------------------------------------------------
 Helix::Helix(const TVector3 &MomentumGev, const TVector3 &PositionCm,
 	     double q, double BFieldTesla)
 {
@@ -35,35 +37,12 @@ Helix::Helix(const TVector3 &MomentumGev, const TVector3 &PositionCm,
   }
   // For the special case that we have no Helix, never happens for us .. right?
   else {
-    std::cout << "MAJOR ERROR in HELIX !!!! STOP !!!!\n";
-  //  Line             auxLine(PositionCm,MomentumGev.unit());  
-  //  Z0             = auxLine.Z0();
-  //  Phi0           = auxLine.Phi0();
-  //  CotTheta       = auxLine.CotTheta();
-  //  D0             = auxLine.D0();
-  //  W              = 0.0;
-  //  
-  //  fCotTheta      = CotTheta;
-  //  fCurvature     = W/2;
-  //  fZ0            = Z0;
-  //  fD0            = D0;
-  //  fPhi0          = Phi0;
-  //  fIsStale       = 1;
-  //  fS             = -999.999;
-  //  fAa            = -999.999; 
-  //  fSs            = -999.999; 
-  //  fCc            = -999.999; 
-  //  fSinPhi0       = 1.0;
-  //  fCosPhi0       = 1.0;
-  //  fSinTheta      = 1.0;
-  //  fCosTheta      = 1.0;
-  //  fVParameters   = 0;
-  //  fCenterIsValid = false;
-  //  fMx            = 0.0;
-  //  fMy            = 0.0;
+    std::cout << "MAJOR ERROR in HELIX!!!! Should not happen. STOP!!!!\n";
+    gSystem->Exit(123);
   }
 }
 
+//--------------------------------------------------------------------------------------------------
 bool Helix::operator == (const Helix &right) const
 {
   return
@@ -74,18 +53,19 @@ bool Helix::operator == (const Helix &right) const
     fPhi0      == right.fPhi0;
 }
 
+//--------------------------------------------------------------------------------------------------
 bool Helix::operator != (const Helix & right) const
 {
   return !((*this)==right);
 }
 
+//--------------------------------------------------------------------------------------------------
 Helix::~Helix()
 {
   delete fVParameters;
 }
 
-
-
+//--------------------------------------------------------------------------------------------------
 TVector3 Helix::Position(double s) const
 {
   fCacheSinesAndCosines(s);
@@ -102,6 +82,7 @@ TVector3 Helix::Position(double s) const
   }
 }
 
+//--------------------------------------------------------------------------------------------------
 TVector3 Helix::Direction(double s) const
 {
   fCacheSinesAndCosines(s);
@@ -114,62 +95,73 @@ TVector3 Helix::Direction(double s) const
   return TVector3(xtan,ytan,ztan);
 }
 
+//--------------------------------------------------------------------------------------------------
 double Helix::PathLengthAtRhoEquals(double rho) const
 {
   return (SinTheta()?(L2DAtR(rho)/SinTheta()):0.0);
 }
 
+//--------------------------------------------------------------------------------------------------
 double Helix::InverseRadius() const
 {
   return fCurvature*2.0;
 }
 
+//--------------------------------------------------------------------------------------------------
 double Helix::Radius() const
 {
   return fabs(1.0/InverseRadius());
 }
 
+//--------------------------------------------------------------------------------------------------
 SignedAngle Helix::TurningAngle(double s) const
 {
   return s/Radius();
 }
 
+//--------------------------------------------------------------------------------------------------
 double Helix::Curvature() const
 {
   return fCurvature;
 }
 
+//--------------------------------------------------------------------------------------------------
 double Helix::Helicity() const
 {
   return fCurvature>0 ? 1.0 : -1.0 ;
 }
 
+//--------------------------------------------------------------------------------------------------
 double Helix::CotTheta() const
 {
   return fCotTheta;
 }
 
+//--------------------------------------------------------------------------------------------------
 Angle Helix::Phi0() const
 {
   return fPhi0;
 }
 
+//--------------------------------------------------------------------------------------------------
 double Helix::D0() const
 {
   return fD0;
 }
 
+//--------------------------------------------------------------------------------------------------
 double Helix::SignLz() const
 {
   return (fD0>0) ? -1.0 : 1.0;
 }
 
+//--------------------------------------------------------------------------------------------------
 double Helix::Z0() const
 {
   return fZ0;
 }
 
-
+//--------------------------------------------------------------------------------------------------
 TVector3 Helix::SecondDerivative(double s) const
 {
   double phi1    = fPhi0+s*2.0*fCurvature*fSinTheta;
@@ -179,27 +171,35 @@ TVector3 Helix::SecondDerivative(double s) const
   return TVector3(xsecond,ysecond,0.0);
 }
 
+//--------------------------------------------------------------------------------------------------
 double Helix::SinPhi0() const
 {
   fRefreshCache();
   return fSinPhi0;
 }
+
+//--------------------------------------------------------------------------------------------------
 double Helix::CosPhi0() const
 {
   fRefreshCache();
   return fCosPhi0;
 }
+
+//--------------------------------------------------------------------------------------------------
 double Helix::SinTheta() const
 {
   fRefreshCache();
   return fSinTheta;
 }
+
+//--------------------------------------------------------------------------------------------------
 double Helix::CosTheta() const
 {
   fRefreshCache();
   return fCosTheta;
 }
 
+//--------------------------------------------------------------------------------------------------
 Angle Helix::PhiAtR(double rho) const
 {
   double c = Curvature();
@@ -214,11 +214,13 @@ Angle Helix::PhiAtR(double rho) const
   return phi;
 }
 
+//--------------------------------------------------------------------------------------------------
 double Helix::ZAtR(double rho) const
 {
   return fZ0 + CotTheta()*L2DAtR(rho);
 }
 
+//--------------------------------------------------------------------------------------------------
 double Helix::L2DAtR(double rho) const {
   double L2D;
 
@@ -246,6 +248,7 @@ double Helix::L2DAtR(double rho) const {
   return L2D;
 }
 
+//--------------------------------------------------------------------------------------------------
 double Helix::CosAlphaAtR(double rho) const {
   double c   = Curvature();
   double d   = D0();
@@ -265,56 +268,3 @@ double Helix::CosAlphaAtR(double rho) const {
   double cosalpha = (x*dir_x + y*dir_y)/rho;
   return cosalpha;
 }
-
-//void Helix::Location(Trajectory::Location &loc, double s) const
-//{
-//  fCacheSinesAndCosines(s);
-//  double cP0sT = fCosPhi0*fSinTheta, sP0sT = fSinPhi0*fSinTheta;
-//  if (s && fCurvature) {
-//    loc.SetLocation(s,
-//                    (fCosPhi0*fSs-
-//                     fSinPhi0*(2.0*fCurvature*fD0+1.0-fCc))
-//                    /(2.0*fCurvature),
-//                    (fSinPhi0*fSs+
-//                     fCosPhi0*(2.0*fCurvature*fD0+1.0-fCc))
-//                    /(2.0*fCurvature),
-//                    s*fCosTheta + fZ0,
-//                    cP0sT*fCc-sP0sT*fSs,
-//                    cP0sT*fSs+sP0sT*fCc,
-//                    fCosTheta
-//                    );
-//  }
-//  else {
-//    loc.SetLocation(s,
-//                    -fD0*fSinPhi0+s*cP0sT,
-//                    fD0*fCosPhi0+s*sP0sT,
-//                    fZ0+s*fCosTheta,
-//                    cP0sT,sP0sT,fCosTheta
-//                    );
-//  }
-//}
-
-//Trajectory::Location* Helix::newIntersectionWith (const HepPlane3D& plane) const
-//{
-//  if (!SinTheta())                  // fastest way out of a screwy situation.
-//    return 0;
-//
-//  double deltaS=1.0,s=0.0;
-//  s = fabs(plane.d())/SinTheta();
-//  HepVector3D normal = plane.normal();
-//  Trajectory::Location *ploc = new Trajectory::Location ;
-//  for (int iteration=0;iteration<100;iteration++) {
-//    if (fabs(deltaS)>0.0001){
-//      Location(*ploc,s);
-//      deltaS = ((-(plane.distance(ploc->position())))
-//		/(normal.dot(ploc->direction()))); 
-//      s+=deltaS;
-//    }
-//    else {
-//      if (s>0)
-//	return ploc;
-//    }
-//  }
-//  delete ploc;
-//  return 0;
-//}

@@ -1,4 +1,4 @@
-// $Id: MathUtils.cc,v 1.4 2008/11/24 14:23:01 loizides Exp $
+// $Id: MathUtils.cc,v 1.5 2009/02/18 15:38:26 loizides Exp $
 
 #include "MitCommon/MathTools/interface/MathUtils.h"
 
@@ -24,22 +24,6 @@ Double_t MathUtils::DeltaPhi(Double_t phi1, Double_t phi2)
 }
 
 //--------------------------------------------------------------------------------------------------
-Double_t MathUtils::DeltaPhi(const FourVector &v1, const FourVector &v2)
-{
-  // Compute DeltaPhi between two given angles. Results is in [-pi/2,pi/2].
-
-  return DeltaPhi(v1.Phi(),v2.Phi());
-}
-
-//--------------------------------------------------------------------------------------------------
-Double_t MathUtils::DeltaPhi(const FourVectorM &v1, const FourVectorM &v2)
-{
-  // Compute DeltaPhi between two given angles. Results is in [-pi/2,pi/2].
-
-  return DeltaPhi(v1.Phi(),v2.Phi());
-}
-
-//--------------------------------------------------------------------------------------------------
 Double_t MathUtils::DeltaR(Double_t phi1, Double_t eta1, Double_t phi2, Double_t eta2)
 {
   // Compute DeltaR between two given points in the eta/phi plane.
@@ -48,22 +32,6 @@ Double_t MathUtils::DeltaR(Double_t phi1, Double_t eta1, Double_t phi2, Double_t
   Double_t deta = eta1-eta2;
   Double_t dR = TMath::Sqrt(dphi*dphi + deta*deta);
   return(dR);
-}
-
-//--------------------------------------------------------------------------------------------------
-Double_t MathUtils::DeltaR(const FourVector &v1, const FourVector &v2)
-{
-  // Compute DeltaR between two given points in the eta/phi plane.
-
-  return MathUtils::DeltaR(v1.Phi(),v1.Eta(),v2.Phi(),v2.Eta());
-}
-
-//--------------------------------------------------------------------------------------------------
-Double_t MathUtils::DeltaR(const FourVectorM &v1, const FourVectorM &v2)
-{
-  // Compute DeltaR between two given points in the eta/phi plane.
-
-  return MathUtils::DeltaR(v1.Phi(),v1.Eta(),v2.Phi(),v2.Eta());
 }
 
 //--------------------------------------------------------------------------------------------------

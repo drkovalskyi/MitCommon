@@ -1,4 +1,4 @@
-// $Id: HelixIntersector.cc,v 1.1 2008/09/17 04:01:50 loizides Exp $
+// $Id: HelixIntersector.cc,v 1.2 2008/11/12 18:22:13 bendavid Exp $
 
 #include "MitCommon/MathTools/interface/HelixIntersector.h"
 #include <iostream>
@@ -6,17 +6,14 @@
 using namespace std;
 using namespace mithep;
 
-// Local constants, macros & typedefs ...
-//static const int testMode = 0;
-
-//--------------------------------------------------------------------------------------------------
-// Constructor
 //--------------------------------------------------------------------------------------------------
 HelixIntersector::HelixIntersector(const TVectorD *tr1, const TVector3 *momentum1,
 				   const TVectorD *tr2, const TVector3 *momentum2) :
   fISec0(tr1,momentum1,tr2,momentum2),
   fISec1(tr1,momentum1,tr2,momentum2)
 {
+  // Constructor.
+
   // short cuts
   TrackParams &trk0 = fISec0.fTrk0;
   TrackParams &trk1 = fISec0.fTrk1;
@@ -73,47 +70,40 @@ HelixIntersector::HelixIntersector(const TVectorD *tr1, const TVector3 *momentum
     // specific quantities
     fISecs[0]->SetLocation(locTrk0,locTrk1);
   }  
-  
 }
 
-//--------------------------------------------------------------------------------------------------
-// Destructor
 //--------------------------------------------------------------------------------------------------
 HelixIntersector::~HelixIntersector()
 {
+  // Destructor.
 }
 
+//--------------------------------------------------------------------------------------------------
 HelixIntersector::TrackParams::TrackParams(const TVectorD *trk, const TVector3 *momentum) :
   Helix  ((*trk)(0),(*trk)(1),(*trk)(2),(*trk)(3),Angle((*trk)(4))),
   fTrkMom(*momentum)
 {
-  // Calculate center of r-phi plane circles
+  // Calculate center of r-phi plane circles.
+
   double rho = Radius() +  Helicity() * D0();
   double phi = Helicity() * M_PI/2.0 + Phi0();
   double z   = 0.0;
-//   if ( rho < 0 ) {
-//     printf("Cylindrical coordinates supplied with negative Rho\n");
-//     printf("Radius = %5f, Helicity = %5f, D0 = %5f, Rho=%5f\n", Radius(), Helicity(), D0(), rho);
-//   }
+  if (0 && rho < 0) {
+    printf("Cylindrical coordinates supplied with negative Rho\n");
+    printf("Radius = %5f, Helicity = %5f, D0 = %5f, Rho=%5f\n", Radius(), Helicity(), D0(), rho);
+  }
   fCenter.SetXYZ(rho*cos(phi),rho*sin(phi),z);
 
   // Original code ....
   //fCenter.SetRhoPhiZ(Radius() +  Helicity() * D0(),  
   //		       Helicity() * M_PI/2.0 + Phi0(),0.0);
-
-  //if (testMode) {
-  //  cout << "Center Test: "
-  //	 << Center() + Radius()*Center().Unit() << " " 
-  //	 << Position(M_PI*Radius()/fabs(SinTheta())) << " DIFF=" 
-  //	 << ( (  Center() + Radius()*Center().Unit())
-  //	      -  Position(M_PI*Radius()/fabs(SinTheta()))).perp()
-  //	 << endl;
-  //}
 }
 
+//--------------------------------------------------------------------------------------------------
 void HelixIntersector::TrackParams::SetLocation(TVector3& location)
 {
-  // rotation about circle center
+  // Rotation about circle center.
+
   double deltaphi = M_PI - fCenter.Angle(location-fCenter);
   
   // check for backward locations
@@ -124,30 +114,29 @@ void HelixIntersector::TrackParams::SetLocation(TVector3& location)
   // calculate arc length to and z of intersection
   fArcLen = Radius()*deltaphi/SinTheta();
   fZAtISec = Z0() + Radius()*deltaphi*CotTheta();
-  
-  //if (testMode) {
-  //  cout << "Arclen test: " << Position(fArcLen) << " "
-  //	 << location << " DIFF=" << (location-Position(fArcLen)).perp()
-  //	 << endl;
-  //}
 
   // calculate momentum of track at intersection
   fMomentum = Direction(fArcLen) * fTrkMom.Mag();
 }
 
+//--------------------------------------------------------------------------------------------------
 HelixIntersector::Intersection::Intersection(const TVectorD *tr1, const TVector3 *momentum1,
 					     const TVectorD *tr2, const TVector3 *momentum2) :
   fDeltaZ(0.0),
   fTrk0  (tr1,momentum1),
   fTrk1  (tr2,momentum2)
 {
+  // Constructor.
+
   fTrks[0] = &fTrk0;
   fTrks[1] = &fTrk1;
 }
 
+//--------------------------------------------------------------------------------------------------
 void HelixIntersector::Intersection::SetLocation(TVector3& loc1, TVector3& loc2)
 {
-  // calculate tracks specific quantities
+  // Calculate tracks specific quantities.
+
   fTrk0.SetLocation(loc1);
   fTrk1.SetLocation(loc2);
   
@@ -155,12 +144,4 @@ void HelixIntersector::Intersection::SetLocation(TVector3& loc1, TVector3& loc2)
   fDeltaZ = fTrk0.fZAtISec - fTrk1.fZAtISec;
   fLocation.SetZ((fTrk0.fZAtISec + fTrk1.fZAtISec)/2.0);
   fMomentum = fTrk0.fMomentum + fTrk1.fMomentum;
-  
-  //if (testMode) {
-  //  cout << "Final Test: " << fTrk0.Position(fTrk0.fArcLen) << " " 
-  //	 << fTrk1.Position(fTrk1.fArcLen) << " "
-  //	 << "DIFF= " << (fTrk0.Position(fTrk0.fArcLen)-
-  //			 fTrk1.Position(fTrk1.fArcLen)).perp()  << " "
-  //	 << "LOCDIFF= " << (loc1-loc2).perp() << endl;
-  //}
 }

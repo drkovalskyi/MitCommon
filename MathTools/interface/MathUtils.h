@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: MathUtils.h,v 1.5 2009/02/18 15:38:26 loizides Exp $
+// $Id: MathUtils.h,v 1.6 2009/03/03 18:12:25 bendavid Exp $
 //
 // MathUtils
 //
@@ -20,12 +20,11 @@ namespace mithep
     public:
       static Double_t AddInQuadrature(Double_t a, Double_t b);  
       static Double_t DeltaPhi(Double_t phi1, Double_t phi2);
-      static Double_t DeltaPhi(const FourVector &v1, const FourVector &v2);
-      static Double_t DeltaPhi(const FourVectorM &v1, const FourVectorM &v2);
+      template<class V1, class V2> 
+      static Double_t DeltaPhi(const V1 &v1, const V2 &v2);
       static Double_t DeltaR(Double_t phi1, Double_t eta1, Double_t phi2, Double_t eta2);
-      static Double_t DeltaR(const FourVector &v1, const FourVector &v2);
-      static Double_t DeltaR(const FourVectorM &v1, const FourVectorM &v2);
-      template<class V1, class V2> static Double_t DeltaR(const V1 &v1, const V2 &v2);
+      template<class V1, class V2> 
+      static Double_t DeltaR(const V1 &v1, const V2 &v2);
       static Double_t Eta2Theta(Double_t eta);
       static Double_t Theta2Eta(Double_t theta);
   };
@@ -33,11 +32,19 @@ namespace mithep
 
 //--------------------------------------------------------------------------------------------------
 template<class V1, class V2>
-Double_t mithep::MathUtils::DeltaR(const V1 &v1, const V2 &v2)
+Double_t mithep::MathUtils::DeltaPhi(const V1 &v1, const V2 &v2)
 {
+  // DeltaPhi between two given objects
 
-  return mithep::MathUtils::DeltaR(v1.Phi(),v1.Eta(),v2.Phi(),v2.Eta());
-
+  return mithep::MathUtils::DeltaPhi(v1.Phi(),v2.Phi());
 }
 
+//--------------------------------------------------------------------------------------------------
+template<class V1, class V2>
+Double_t mithep::MathUtils::DeltaR(const V1 &v1, const V2 &v2)
+{
+  // DeltaR between two given objects
+
+  return mithep::MathUtils::DeltaR(v1.Phi(),v1.Eta(),v2.Phi(),v2.Eta());
+}
 #endif

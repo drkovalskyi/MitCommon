@@ -1,4 +1,4 @@
-// $Id: MultiVertexFitterD.cc,v 1.2 2008/09/30 12:48:12 bendavid Exp $
+// $Id: MultiVertexFitterD.cc,v 1.1 2008/11/13 16:34:29 paus Exp $
 
 #include "MitCommon/VertexFit/interface/MultiVertexFitterD.h"
 #include <algorithm>
@@ -17,11 +17,14 @@ using namespace std;
 using namespace mithep;
 
 jmp_buf denv;
+
+//--------------------------------------------------------------------------------------------------
 extern "C" void MultiVertexFitterDSetStatus(int i) { 
   cout << "Warning, you are handling a severe error in MultiVertexFitterD" << endl;
   longjmp(denv,-66);
 }
 
+//--------------------------------------------------------------------------------------------------
 MultiVertexFitterD::MultiVertexFitterD() :
   _bField                      (3.8),   // default B field for running
   _currentAllocatedVertexNumber(0),     // facilitates CandNode recursion
@@ -46,6 +49,7 @@ MultiVertexFitterD::MultiVertexFitterD() :
   _extrapolateTrackErrors = false;
 }
 
+//--------------------------------------------------------------------------------------------------
 void MultiVertexFitterD::init(double bField)
 {
   // Set internal variable which keeps track of the b field
@@ -105,6 +109,7 @@ void MultiVertexFitterD::init(double bField)
   _referencePoint   = ThreeVector(0,0,0);
 }
 
+//--------------------------------------------------------------------------------------------------
 bool MultiVertexFitterD::addTrack(const HepVector &v, const HepSymMatrix &cov,
 				  int trackId, float mass, vertexNumber jv)
 {
@@ -150,6 +155,7 @@ bool MultiVertexFitterD::addTrack(const HepVector &v, const HepSymMatrix &cov,
   return true;
 }
 
+//--------------------------------------------------------------------------------------------------
 bool MultiVertexFitterD::addTrack(const TVectorD &v, const TMatrixDSym &cov,
 				  int trackId, double mass, vertexNumber jv)
 {
@@ -197,6 +203,7 @@ bool MultiVertexFitterD::addTrack(const TVectorD &v, const TMatrixDSym &cov,
   return true;
 }
 
+//--------------------------------------------------------------------------------------------------
 bool MultiVertexFitterD::vertexPoint_2d(vertexNumber jv1, vertexNumber jv2)
 {
   // Check that these vertex numbers are within allowed range and that the vertices are unique.
@@ -214,6 +221,7 @@ bool MultiVertexFitterD::vertexPoint_2d(vertexNumber jv1, vertexNumber jv2)
   return true;
 }
 
+//--------------------------------------------------------------------------------------------------
 bool MultiVertexFitterD::vertexPoint_3d(vertexNumber jv1, vertexNumber jv2)
 {
   // Check that these vertex numbers are within allowed range and that the vertices are distinct
@@ -231,6 +239,7 @@ bool MultiVertexFitterD::vertexPoint_3d(vertexNumber jv1, vertexNumber jv2)
   return true;
 }
 
+//--------------------------------------------------------------------------------------------------
 bool MultiVertexFitterD::vertexPoint_1track(vertexNumber jv1, vertexNumber jv2)
 {
   // Check that these vertex numbers are within allowed range and are distinct
@@ -248,6 +257,7 @@ bool MultiVertexFitterD::vertexPoint_1track(vertexNumber jv1, vertexNumber jv2)
   return true;
 }
 
+//--------------------------------------------------------------------------------------------------
 bool MultiVertexFitterD::vertexPoint_0track(vertexNumber jv1, vertexNumber jv2)
 {
   // jv2 is the zero track vertex. jv1 is the multi track vertex which points to jv2
@@ -276,6 +286,7 @@ bool MultiVertexFitterD::vertexPoint_0track(vertexNumber jv1, vertexNumber jv2)
   return true;
 }
 
+//--------------------------------------------------------------------------------------------------
 bool MultiVertexFitterD::conversion_2d(vertexNumber jv)
 {
   if (jv<VERTEX_1 || jv>_ctvmq.nvertx)
@@ -286,6 +297,7 @@ bool MultiVertexFitterD::conversion_2d(vertexNumber jv)
   return true;
 }
 
+//--------------------------------------------------------------------------------------------------
 bool MultiVertexFitterD::conversion_3d(vertexNumber jv)
 {
    if (jv<VERTEX_1 || jv>_ctvmq.nvertx)
@@ -296,6 +308,7 @@ bool MultiVertexFitterD::conversion_3d(vertexNumber jv)
    return true;
 }
 
+//--------------------------------------------------------------------------------------------------
 bool MultiVertexFitterD::massConstrain(int ntrk, const int trkIds[], float mass)
 {
   // Check that we have not exceeded the allowed number of mass constraints.
@@ -325,6 +338,7 @@ bool MultiVertexFitterD::massConstrain(int ntrk, const int trkIds[], float mass)
   return true;
 }
 
+//--------------------------------------------------------------------------------------------------
 bool MultiVertexFitterD::beamlineConstraint(float xb, float yb, HepSymMatrix berr,
 					    float xzbslope, float yzbslope)
 {
@@ -348,6 +362,7 @@ bool MultiVertexFitterD::beamlineConstraint(float xb, float yb, HepSymMatrix ber
   return success;
 }
 
+//--------------------------------------------------------------------------------------------------
 bool MultiVertexFitterD::beamlineConstraint(Hep3Vector pv, HepSymMatrix berr, float xzbslope,
 					    float yzbslope)
 {
@@ -358,6 +373,7 @@ bool MultiVertexFitterD::beamlineConstraint(Hep3Vector pv, HepSymMatrix berr, fl
   return beamlineConstraint(pv.x(),pv.y(),berr,xzbslope,yzbslope);
 }
 
+//--------------------------------------------------------------------------------------------------
 void MultiVertexFitterD::setPrimaryVertex(float xv, float yv, float zv)
 {
   // Set x,y,z position of the primary vertex.
@@ -368,6 +384,7 @@ void MultiVertexFitterD::setPrimaryVertex(float xv, float yv, float zv)
   _primaryVertex = Hep3Vector( xv, yv, zv );
 }
 
+//--------------------------------------------------------------------------------------------------
 void MultiVertexFitterD::setPrimaryVertex(Hep3Vector pv)
 {
   // Set x,y,z position of the primary vertex.
@@ -378,6 +395,7 @@ void MultiVertexFitterD::setPrimaryVertex(Hep3Vector pv)
   _primaryVertex   = pv;
 }
 
+//--------------------------------------------------------------------------------------------------
 void MultiVertexFitterD::setPrimaryVertexError(const float xverr[3][3])
 {
   // Set the error matrix for the primary vertex.
@@ -387,6 +405,7 @@ void MultiVertexFitterD::setPrimaryVertexError(const float xverr[3][3])
   }
 }
 
+//--------------------------------------------------------------------------------------------------
 bool MultiVertexFitterD::setPrimaryVertexError(const HepSymMatrix &xverr)
 {
   // Set the error matrix for the primary vertex using a HepSymMatrix.  First check that the matrix
@@ -400,6 +419,7 @@ bool MultiVertexFitterD::setPrimaryVertexError(const HepSymMatrix &xverr)
   return true;
 }
 
+//--------------------------------------------------------------------------------------------------
 bool MultiVertexFitterD::fit()
 {
   // Check that the diagonal elements of all the track error matrices are positive
@@ -464,11 +484,13 @@ bool MultiVertexFitterD::fit()
   return (_stat == 0);
 }
 
+//--------------------------------------------------------------------------------------------------
 void MultiVertexFitterD::print() const
 {
   print(cout);
 }
 
+//--------------------------------------------------------------------------------------------------
 void MultiVertexFitterD::print(ostream& os) const
 {
   os << "****************************** MultiVertexFitterD "
@@ -558,11 +580,13 @@ void MultiVertexFitterD::print(ostream& os) const
   return;
 }
 
+//--------------------------------------------------------------------------------------------------
 void MultiVertexFitterD::printErr() const
 {
   printErr(cout);
 }
 
+//--------------------------------------------------------------------------------------------------
 void MultiVertexFitterD::printErr(ostream& os) const
 {
   os << "MultiVertexFitterD: IJKERR = " << _ctvmq.ijkerr[0] << ", "
@@ -743,7 +767,6 @@ void MultiVertexFitterD::printErr(ostream& os) const
 	os << "      zero-track vertexing: Two lines (tracks) are "
 	   << " parallel/antiparallel." << endl;
       }
-      
     }
   }
   else if (_ctvmq.ijkerr[0] == 3) {
@@ -796,6 +819,7 @@ void MultiVertexFitterD::printErr(ostream& os) const
   return;
 }
 
+//--------------------------------------------------------------------------------------------------
 void MultiVertexFitterD::getIJKErr(int& err0, int& err1, int& err2) const
 {
   err0 = _ctvmq.ijkerr[0];
@@ -804,19 +828,25 @@ void MultiVertexFitterD::getIJKErr(int& err0, int& err1, int& err2) const
   return;
 }
 
+//--------------------------------------------------------------------------------------------------
 int MultiVertexFitterD::getIJKErr0() const
 {
   return _ctvmq.ijkerr[0];
 }
+
+//--------------------------------------------------------------------------------------------------
 int MultiVertexFitterD::getIJKErr1() const
 {
   return _ctvmq.ijkerr[1];
 }
+
+//--------------------------------------------------------------------------------------------------
 int MultiVertexFitterD::getIJKErr2() const
 {
   return _ctvmq.ijkerr[2];
 }
 
+//--------------------------------------------------------------------------------------------------
 int MultiVertexFitterD::getErrTrackId() const
 {
   if (status() == 0) return 0;
@@ -831,22 +861,26 @@ int MultiVertexFitterD::getErrTrackId() const
   return trkId;
 }
 
+//--------------------------------------------------------------------------------------------------
 string MultiVertexFitterD::expert() const
 {
   return _expert;
 }
 
+//--------------------------------------------------------------------------------------------------
 int MultiVertexFitterD::status() const
 {
   return _stat;
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::chisq() const
 {
   // Chi-square of fit
   return _ctvmq.chisqr[0];
 }
 
+//--------------------------------------------------------------------------------------------------
 int MultiVertexFitterD::ndof() const
 {
   // Number of degrees of freedom of fit.
@@ -856,6 +890,7 @@ int MultiVertexFitterD::ndof() const
     return 0;
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::prob() const
 {
   // Probability of chi-square of fit
@@ -868,6 +903,7 @@ float MultiVertexFitterD::prob() const
     return -999.;
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::chisq(const int trkId) const
 {
   // This method returns the chisquare contribution for one track If fit not successful or not done
@@ -885,6 +921,7 @@ float MultiVertexFitterD::chisq(const int trkId) const
   return -1.;
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::chisq_rphi() const
 {
   // This method returns the chisquare contribution in the r-phi plane.
@@ -908,6 +945,7 @@ float MultiVertexFitterD::chisq_rphi() const
   return chisq;
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::chisq_z() const
 {
   // This method returns the chisquare contribution in the z direction.
@@ -931,6 +969,7 @@ float MultiVertexFitterD::chisq_z() const
   return chisq;
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::chisq_rphiz() const
 {
   // This method returns the chisquare contribution of the cross
@@ -957,6 +996,7 @@ float MultiVertexFitterD::chisq_rphiz() const
    return 2.0 * chisq;
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::chisq_rphi(const int trkId) const
 {
   // This method returns the chisquare contribution in the r-phi plane.
@@ -986,6 +1026,7 @@ float MultiVertexFitterD::chisq_rphi(const int trkId) const
   return -1.;
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::chisq_z(const int trkId) const
 {
   // This method returns the chisquare contribution in the z direction.
@@ -1014,6 +1055,7 @@ float MultiVertexFitterD::chisq_z(const int trkId) const
   return -1.;
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::chisq_rphiz(const int trkId) const
 {
   // This method returns the chisquare contribution of the cross terms in the r-phi and z
@@ -1043,22 +1085,7 @@ float MultiVertexFitterD::chisq_rphiz(const int trkId) const
   return -1.;
 }
 
-//HepLorentzVector MultiVertexFitterD::getTrackP4(const int trkId) const
-//{
-//  if (_stat != 0)
-//    return HepLorentzVector(0,0,0,0);
-//  // return four momentum of fit track 
-//  for (int jt=0; jt<_ctvmq.ntrack; ++jt) {
-//    // Find which track matches this Id.
-//    if (trkId == _ctvmq.list[jt]) {
-//      HepLorentzVector p4((double)_ctvmq.trkp4[0][jt], (double)_ctvmq.trkp4[1][jt],
-//			  (double)_ctvmq.trkp4[2][jt], (double)_ctvmq.trkp4[3][jt]);
-//      return p4;
-//    }
-//  }
-//  return HepLorentzVector(0,0,0,0);
-//}
-
+//--------------------------------------------------------------------------------------------------
 FourVector MultiVertexFitterD::getTrackP4(const int trkId) const
 {
   if (_stat != 0)
@@ -1075,6 +1102,7 @@ FourVector MultiVertexFitterD::getTrackP4(const int trkId) const
   return FourVector(0,0,0,0);
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::getMass(int ntrk, const int trkIds[], float &dmass) const
 {
 // #if (defined(LINUX) && defined(__USE_BSD)) || defined(OSF1)
@@ -1120,6 +1148,7 @@ float MultiVertexFitterD::getMass(int ntrk, const int trkIds[], float &dmass) co
   return mass;
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::getDecayLength(vertexNumber nv, vertexNumber mv, 
 					 const Hep3Vector& dir, float& dlerr) const
 {
@@ -1200,6 +1229,7 @@ float MultiVertexFitterD::getDecayLength(vertexNumber nv, vertexNumber mv,
   return dl;
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::getDecayLength(vertexNumber nv, vertexNumber mv, 
 					 const ThreeVector& dir, float& dlerr) const
 {
@@ -1207,6 +1237,7 @@ float MultiVertexFitterD::getDecayLength(vertexNumber nv, vertexNumber mv,
   return getDecayLength(nv, mv, dirHep, dlerr);
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::getZDecayLength(vertexNumber nv, vertexNumber mv,
 					  const Hep3Vector& mom, float& dlerr) const
 {
@@ -1291,6 +1322,7 @@ float MultiVertexFitterD::getZDecayLength(vertexNumber nv, vertexNumber mv,
   return dl;
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::getZDecayLength(vertexNumber nv, vertexNumber mv,
 					  const ThreeVector& mom, float& dlerr) const
 {
@@ -1298,6 +1330,7 @@ float MultiVertexFitterD::getZDecayLength(vertexNumber nv, vertexNumber mv,
   return getZDecayLength(nv, mv, momHep, dlerr);
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::getImpactPar(vertexNumber prdV, vertexNumber dcyV,
 				       const Hep3Vector &v, float &dxyerr) const
 {
@@ -1324,6 +1357,7 @@ float MultiVertexFitterD::getImpactPar(vertexNumber prdV, vertexNumber dcyV,
   return dxy;
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::getImpactPar(vertexNumber prdV, vertexNumber dcyV,
 				       const ThreeVector &v, float &dxyerr) const
 {
@@ -1331,6 +1365,7 @@ float MultiVertexFitterD::getImpactPar(vertexNumber prdV, vertexNumber dcyV,
   return getImpactPar(prdV, dcyV, vHep, dxyerr);
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::get_dr(vertexNumber nv, vertexNumber mv, float& drerr) const
 {
    drerr = -999.;
@@ -1355,6 +1390,7 @@ float MultiVertexFitterD::get_dr(vertexNumber nv, vertexNumber mv, float& drerr)
    return dr;
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::get_dz(vertexNumber nv, vertexNumber mv, float& dzerr) const
 {
   dzerr = -999.;
@@ -1380,6 +1416,7 @@ float MultiVertexFitterD::get_dz(vertexNumber nv, vertexNumber mv, float& dzerr)
   return dz;
 }
 
+//--------------------------------------------------------------------------------------------------
 Hep3Vector MultiVertexFitterD::getVertexHep(vertexNumber nv) const
 {
   if (_stat!=0)
@@ -1415,6 +1452,7 @@ Hep3Vector MultiVertexFitterD::getVertexHep(vertexNumber nv) const
   return vertex;
 }
 
+//--------------------------------------------------------------------------------------------------
 ThreeVector MultiVertexFitterD::getVertex(vertexNumber nv) const
 {
   if (_stat!=0)
@@ -1450,6 +1488,7 @@ ThreeVector MultiVertexFitterD::getVertex(vertexNumber nv) const
   return vertex;
 }
 
+//--------------------------------------------------------------------------------------------------
 ThreeSymMatrix MultiVertexFitterD::getErrorMatrix(MultiVertexFitterD::vertexNumber nv) const 
 {  
   // return errors for vertex nv
@@ -1477,6 +1516,7 @@ ThreeSymMatrix MultiVertexFitterD::getErrorMatrix(MultiVertexFitterD::vertexNumb
   return cov;
 }
 
+//--------------------------------------------------------------------------------------------------
 double MultiVertexFitterD::getErrorMatrixHep(int j, int k) const
 {
   if (_stat!=0)
@@ -1491,6 +1531,7 @@ double MultiVertexFitterD::getErrorMatrixHep(int j, int k) const
   return _ctvmfr.vmat[k-1][j-1];
 }
 
+//--------------------------------------------------------------------------------------------------
 HepSymMatrix MultiVertexFitterD::getErrorMatrixHep(MultiVertexFitterD::vertexNumber nv) const 
 {  
   // return errors for vertex nv
@@ -1518,6 +1559,7 @@ HepSymMatrix MultiVertexFitterD::getErrorMatrixHep(MultiVertexFitterD::vertexNum
   return cov;
 }
 
+//--------------------------------------------------------------------------------------------------
 HepSymMatrix MultiVertexFitterD::getErrorMatrixHep(const int trkId) const 
 {
   HepSymMatrix cov(3,0);
@@ -1541,6 +1583,7 @@ HepSymMatrix MultiVertexFitterD::getErrorMatrixHep(const int trkId) const
   return cov;
 }
 
+//--------------------------------------------------------------------------------------------------
 float MultiVertexFitterD::getPtError(const int trkId) const
 {  
   if (_stat != 0)
@@ -1570,6 +1613,7 @@ float MultiVertexFitterD::getPtError(const int trkId) const
   return 0;
 }
 
+//--------------------------------------------------------------------------------------------------
 void MultiVertexFitterD::getPosMomErr(HepMatrix& errors) const
 {
   // A c++ rewrite of the FORTRAN MASSAG function The result of this function is an error matrix in
@@ -1749,6 +1793,7 @@ void MultiVertexFitterD::getPosMomErr(HepMatrix& errors) const
   errors = answer[0];
 }
 
+//--------------------------------------------------------------------------------------------------
 int MultiVertexFitterD::vOff(vertexNumber jv) const
 {
   if (jv < VERTEX_1 || jv > _maxvtx)
@@ -1757,6 +1802,7 @@ int MultiVertexFitterD::vOff(vertexNumber jv) const
     return _ctvmq.voff[jv-1];
 }
 
+//--------------------------------------------------------------------------------------------------
 int MultiVertexFitterD::tOff(const int trkId) const
 {
   for (int kt=0; kt<_ctvmq.ntrack; ++kt) {
@@ -1766,6 +1812,7 @@ int MultiVertexFitterD::tOff(const int trkId) const
   return -999;
 }
 
+//--------------------------------------------------------------------------------------------------
 int MultiVertexFitterD::pOff(int lp) const
 { 
   if (lp < 1)
@@ -1774,6 +1821,7 @@ int MultiVertexFitterD::pOff(int lp) const
     return _ctvmq.poff[lp-1];
 }
 
+//--------------------------------------------------------------------------------------------------
 int MultiVertexFitterD::cOff(int lc) const
 {
   if (lc < 1)
@@ -1782,11 +1830,13 @@ int MultiVertexFitterD::cOff(int lc) const
     return _ctvmq.coff[lc-1];
 }
 
+//--------------------------------------------------------------------------------------------------
 int MultiVertexFitterD::mOff() const
 {
   return _ctvmq.moff;
 }
 
+//--------------------------------------------------------------------------------------------------
 double MultiVertexFitterD::VMat(int i, int j) const
 {
   if (i <0 || j < 0)
@@ -1797,6 +1847,7 @@ double MultiVertexFitterD::VMat(int i, int j) const
 
 // Facilitates CandNode recursion.  CandNodes have no way of deciding which vertex they are, and
 // these trivial functions help them do that.
+//--------------------------------------------------------------------------------------------------
 MultiVertexFitterD::vertexNumber MultiVertexFitterD::allocateVertexNumber()
 {
   if ((_currentAllocatedVertexNumber < PRIMARY_VERTEX) ||
@@ -1807,11 +1858,13 @@ MultiVertexFitterD::vertexNumber MultiVertexFitterD::allocateVertexNumber()
   return vertexNumber(++_currentAllocatedVertexNumber);
 }
 
+//--------------------------------------------------------------------------------------------------
 void MultiVertexFitterD::resetAllocatedVertexNumber()
 {
   _currentAllocatedVertexNumber = 0;
 }
 
+//--------------------------------------------------------------------------------------------------
 void MultiVertexFitterD::restoreFromCommons()
 {
   _stat       = 0;
@@ -1824,45 +1877,3 @@ void MultiVertexFitterD::restoreFromCommons()
   _fiddle     = *_fiddle_com;
   _trkprm     = *_trkprm_com;
 }
-
-//void MultiVertexFitterD::setTrackReferencePoint(const Hep3Vector &ref)
-//{
-//  // Set extrapolation flag
-//  _extrapolateTrackErrors = true; 
-//  // Keep new reference point
-//  _referencePoint = ref;
-//  // Keep track of old primary vertex in CDF coordinates
-//  _cdfPrimaryVertex = _primaryVertex;
-//  // Set new primary vertex relative to new reference point
-//  setPrimaryVertex(_cdfPrimaryVertex - _referencePoint);
-//}
-//
-//void MultiVertexFitterD::moveReferencePoint(HepVector &v, HepSymMatrix &m)
-//{
-//  // Move the reference point of the track to _referencePoint
-//  if (!_extrapolateTrackErrors)
-//    return;
-//  
-//  TrackExtrapolator e;
-//  // Modifies v and m
-//  e.moveReferencePoint(v, m, _referencePoint);
-//}
-//
-//Helix MultiVertexFitterD::getHelix(const int trkId) const
-//{
-//  if (_stat != 0)
-//    return Helix(0,0,0,0,0);
-//  // return helix parameters of fit track 
-//  for (int jt=0; jt<_ctvmq.ntrack; ++jt) {
-//    // Find which track matches this Id.
-//    if (trkId == _ctvmq.list[jt]) {
-//      Helix trhelix((double)_ctvmq.par[jt][2],
-//  		      (double)_ctvmq.par[jt][0],
-//		      (double)_ctvmq.par[jt][4],
-//		      (double)_ctvmq.par[jt][3],
-//		      (double)_ctvmq.par[jt][1]);
-//      return trhelix;
-//    }
-//  }
-//  return Helix(0,0,0,0,0);
-//}

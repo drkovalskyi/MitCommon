@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Angle.h,v 1.4 2008/09/14 15:28:19 loizides Exp $
+// $Id: Angle.h,v 1.1 2008/09/17 04:01:50 loizides Exp $
 //
 // Angle classes, with automatic range checking.  SignedAngle ranges from -PI to PI, UnsignedAngle
 // from 0 to 2PI.  The two types of angle convert implicitly into double.
@@ -34,7 +34,8 @@
 //
 // Adding a direct conversion between the two types of angle would result in several ambiguities.
 //
-// Author: C.Paus (stolen from CDF implementation of Paolo Gatti, University of Padova / INFN)
+// Author: C.Paus (stolen from CDF implementation of Paolo Gatti, University of Padova / INFN,
+//                 therefore not all our coding conventions fulfilled) 
 //--------------------------------------------------------------------------------------------------
 
 #ifndef MITCOMMON_MATHTOOLS_ANGLE_H
@@ -148,298 +149,324 @@ namespace mithep
 // By default, "Angles" are unsigned (CDF convention: 0-2PI range).
   typedef UnsignedAngle Angle;
 
-inline
-void mithep::SignedAngle::FixRangeFast()
-{
-  if      (fValue >= M_PI)
+//--------------------------------------------------------------------------------------------------
+  inline
+  void mithep::SignedAngle::FixRangeFast()
+  {
+    if      (fValue >= M_PI)
     fValue -= 2 * M_PI;
-  else if (fValue < -M_PI)
-    fValue += 2 * M_PI;
-}
+    else if (fValue < -M_PI)
+      fValue += 2 * M_PI;
+  }
 
-inline
-void mithep::SignedAngle::FixRangeSlow()
-{
-  if (fValue < -M_PI) {
-    if (fValue < double(std::numeric_limits<int>::min()) * 2 * M_PI)
-      std::cout << "@SUB=SignedAngle::FixRangeSlow"
-		<< "Angle out of range:  " << fValue << std::endl;
-    else {
-      int shift = int((M_PI - fValue) / (2 * M_PI));
-      fValue += shift * 2 * M_PI;
+//--------------------------------------------------------------------------------------------------
+  inline
+  void mithep::SignedAngle::FixRangeSlow()
+  {
+    if (fValue < -M_PI) {
+      if (fValue < double(std::numeric_limits<int>::min()) * 2 * M_PI)
+        std::cout << "@SUB=SignedAngle::FixRangeSlow"
+                  << "Angle out of range:  " << fValue << std::endl;
+      else {
+        int shift = int((M_PI - fValue) / (2 * M_PI));
+        fValue += shift * 2 * M_PI;
+      }
+    }
+    // The previous step might have brought -3PI to +PI, so no 'else' here.
+    if (fValue >= M_PI) {
+      if (fValue > double(std::numeric_limits<int>::max()) * 2 * M_PI) {
+        std::cout << "@SUB=SignedAngle::FixRangeSlow"
+                  << "Angle out of range:  " << fValue << std::endl;
+      }
+      else {
+        int shift = int((fValue + M_PI) / (2 * M_PI));
+        fValue -= shift * 2 * M_PI;
+      }
     }
   }
-  // The previous step might have brought -3PI to +PI, so no 'else' here.
-  if (fValue >= M_PI) {
-    if (fValue > double(std::numeric_limits<int>::max()) * 2 * M_PI) {
-      std::cout << "@SUB=SignedAngle::FixRangeSlow"
-		<< "Angle out of range:  " << fValue << std::endl;
-    }
-    else {
-      int shift = int((fValue + M_PI) / (2 * M_PI));
-      fValue -= shift * 2 * M_PI;
-    }
+
+
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::SignedAngle::SignedAngle(double angle)
+    : fValue(angle)
+  {
+    // Constructor
+
+    FixRangeSlow();
   }
-}
 
-// Constructor
-
-inline
-mithep::SignedAngle::SignedAngle(double angle)
-  : fValue(angle)
-{
-  FixRangeSlow();
-}
-
-// Implicit conversion to double
-
-inline
-mithep::SignedAngle::operator double() const
-{
-  return fValue;
-}
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::SignedAngle::operator double() const
+  {
+    // Implicit conversion to double
+    return fValue;
+  }
 
 // Self-modifying operations
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::SignedAngle& mithep::SignedAngle::operator += (const mithep::SignedAngle& other)
+  {
+    fValue += other.fValue;
+    FixRangeFast(); // other.fValue is guaranteed to be in range
+    return *this;
+  }
 
+//--------------------------------------------------------------------------------------------------
 inline
-mithep::SignedAngle& mithep::SignedAngle::operator += (const mithep::SignedAngle& other)
-{
-  fValue += other.fValue;
-  FixRangeFast(); // other.fValue is guaranteed to be in range
-  return *this;
-}
+  mithep::SignedAngle& mithep::SignedAngle::operator -= (const mithep::SignedAngle& other)
+  {
+    fValue -= other.fValue;
+    FixRangeFast(); // other.fValue is guaranteed to be in range
+    return *this;
+  }
 
-inline
-mithep::SignedAngle& mithep::SignedAngle::operator -= (const mithep::SignedAngle& other)
-{
-  fValue -= other.fValue;
-  FixRangeFast(); // other.fValue is guaranteed to be in range
-  return *this;
-}
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::SignedAngle& mithep::SignedAngle::operator *= (double other)
+  {
+    fValue *= other;
+    FixRangeSlow();
+    return *this;
+  }
 
-inline
-mithep::SignedAngle& mithep::SignedAngle::operator *= (double other)
-{
-  fValue *= other;
-  FixRangeSlow();
-  return *this;
-}
-
-inline
-mithep::SignedAngle& mithep::SignedAngle::operator /= (double other)
-{
-  fValue /= other;
-  FixRangeSlow();
-  return *this;
-}
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::SignedAngle& mithep::SignedAngle::operator /= (double other)
+  {
+    fValue /= other;
+    FixRangeSlow();
+    return *this;
+  }
 
 // Other operations
-
-inline
-mithep::SignedAngle operator + (double me, const mithep::SignedAngle& other)
-{
-  mithep::SignedAngle result(me);
-  result += other;
-  return result;
-}
-
-inline
-mithep::SignedAngle mithep::SignedAngle::operator + (const mithep::SignedAngle& other) const
-{
-  mithep::SignedAngle result(*this);
-  result += other;
-  return result;
-}
-
-inline
-mithep::SignedAngle mithep::SignedAngle::operator + (double other) const
-{
-  return mithep::SignedAngle(fValue + other);
-}
-
-inline
-mithep::SignedAngle operator - (double me, const mithep::SignedAngle& other)
-{
-  mithep::SignedAngle result(me);
-  result -= other;
-  return result;
-}
-
-inline
-mithep::SignedAngle mithep::SignedAngle::operator - (const mithep::SignedAngle& other) const
-{
-  mithep::SignedAngle result(*this);
-  result -= other;
-  return result;
-}
-
-inline
-mithep::SignedAngle mithep::SignedAngle::operator - (double other) const
-{
-  return mithep::SignedAngle(fValue - other);
-}
-
-inline
-mithep::SignedAngle mithep::SignedAngle::operator / (double other) const
-{
-  mithep::SignedAngle result(*this);
-  result /= other;
-  return result;
-}
-
-inline
-mithep::SignedAngle mithep::SignedAngle::operator / (int other) const
-{
-  mithep::SignedAngle result(*this);
-  result /= other;
-  return result;
-}
-
-inline
-void mithep::UnsignedAngle::FixRangeFast()
-{
-  if      (fValue >= 2 * M_PI)
-    fValue -= 2 * M_PI;
-  else if (fValue < 0)
-    fValue += 2 * M_PI;
-}
-
-inline
-void mithep::UnsignedAngle::FixRangeSlow()
-{
-  if (fValue < 0) {
-    if (fValue < double(std::numeric_limits<int>::min()) * 2 * M_PI)
-      std::cout << "@SUB=UnsignedAngle::FixRangeSlow"
-		<< "Angle out of range:  " << fValue << std::endl;
-    else  {
-      int shift = 1 - int(fValue / (2 * M_PI));
-      fValue += shift * 2 * M_PI;
-    }
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::SignedAngle operator + (double me, const mithep::SignedAngle& other)
+  {
+    mithep::SignedAngle result(me);
+    result += other;
+    return result;
   }
+
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::SignedAngle mithep::SignedAngle::operator + (const mithep::SignedAngle& other) const
+  {
+    mithep::SignedAngle result(*this);
+    result += other;
+    return result;
+  }
+
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::SignedAngle mithep::SignedAngle::operator + (double other) const
+  {
+    return mithep::SignedAngle(fValue + other);
+  }
+
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::SignedAngle operator - (double me, const mithep::SignedAngle& other)
+  {
+    mithep::SignedAngle result(me);
+    result -= other;
+    return result;
+  }
+
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::SignedAngle mithep::SignedAngle::operator - (const mithep::SignedAngle& other) const
+  {
+    mithep::SignedAngle result(*this);
+    result -= other;
+    return result;
+  }
+
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::SignedAngle mithep::SignedAngle::operator - (double other) const
+  {
+    return mithep::SignedAngle(fValue - other);
+  }
+
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::SignedAngle mithep::SignedAngle::operator / (double other) const
+  {
+    mithep::SignedAngle result(*this);
+    result /= other;
+    return result;
+  }
+
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::SignedAngle mithep::SignedAngle::operator / (int other) const
+  {
+    mithep::SignedAngle result(*this);
+    result /= other;
+    return result;
+  }
+
+//--------------------------------------------------------------------------------------------------
+  inline
+  void mithep::UnsignedAngle::FixRangeFast()
+  {
+    if      (fValue >= 2 * M_PI)
+      fValue -= 2 * M_PI;
+    else if (fValue < 0)
+      fValue += 2 * M_PI;
+  }
+
+//--------------------------------------------------------------------------------------------------
+  inline
+  void mithep::UnsignedAngle::FixRangeSlow()
+  {
+    if (fValue < 0) {
+      if (fValue < double(std::numeric_limits<int>::min()) * 2 * M_PI)
+        std::cout << "@SUB=UnsignedAngle::FixRangeSlow"
+                  << "Angle out of range:  " << fValue << std::endl;
+      else  {
+        int shift = 1 - int(fValue / (2 * M_PI));
+        fValue += shift * 2 * M_PI;
+      }
+    }
   // The previous step might have brought -2PI to +2PI, so no 'else' here.
-  if (fValue >= 2 * M_PI) {
-    if (fValue > double(std::numeric_limits<int>::max()) * 2 * M_PI)
-      std::cout << "@SUB=UnsignedAngle::FixRangeSlow"
-		<< "Angle out of range:  " << fValue << std::endl;
-    else {
-      int shift = int(fValue / (2 * M_PI));
-      fValue -= shift * 2 * M_PI;
+    if (fValue >= 2 * M_PI) {
+      if (fValue > double(std::numeric_limits<int>::max()) * 2 * M_PI)
+        std::cout << "@SUB=UnsignedAngle::FixRangeSlow"
+                  << "Angle out of range:  " << fValue << std::endl;
+      else {
+        int shift = int(fValue / (2 * M_PI));
+        fValue -= shift * 2 * M_PI;
+      }
     }
   }
-}
 
-// Constructor
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::UnsignedAngle::UnsignedAngle(double angle)
+    : fValue(angle)
+  {
+    // Constructor
+    FixRangeSlow();
+  }
 
-inline
-mithep::UnsignedAngle::UnsignedAngle(double angle)
-  : fValue(angle)
-{
-  FixRangeSlow();
-}
-
-// Implicit conversion to double
-
-inline
-mithep::UnsignedAngle::operator double() const
-{
-  return fValue;
-}
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::UnsignedAngle::operator double() const
+  {
+    // Implicit conversion to double  
+    
+    return fValue;
+  }
 
 // Self-modifying operations
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::UnsignedAngle& mithep::UnsignedAngle::operator += (const mithep::UnsignedAngle& other)
+  {
+    fValue += other.fValue;
+    FixRangeFast(); // other.fValue is guaranteed to be in range
+    return *this;
+  }
 
-inline
-mithep::UnsignedAngle& mithep::UnsignedAngle::operator += (const mithep::UnsignedAngle& other)
-{
-  fValue += other.fValue;
-  FixRangeFast(); // other.fValue is guaranteed to be in range
-  return *this;
-}
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::UnsignedAngle& mithep::UnsignedAngle::operator -= (const mithep::UnsignedAngle& other)
+  {
+    fValue -= other.fValue;
+    FixRangeFast(); // other.fValue is guaranteed to be in range
+    return *this;
+  }
 
-inline
-mithep::UnsignedAngle& mithep::UnsignedAngle::operator -= (const mithep::UnsignedAngle& other)
-{
-  fValue -= other.fValue;
-  FixRangeFast(); // other.fValue is guaranteed to be in range
-  return *this;
-}
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::UnsignedAngle& mithep::UnsignedAngle::operator *= (double other)
+  {
+    fValue *= other;
+    FixRangeSlow();
+    return *this;
+  }
 
-inline
-mithep::UnsignedAngle& mithep::UnsignedAngle::operator *= (double other)
-{
-  fValue *= other;
-  FixRangeSlow();
-  return *this;
-}
-
-inline
-mithep::UnsignedAngle& mithep::UnsignedAngle::operator /= (double other)
-{
-  fValue /= other;
-  FixRangeSlow();
-  return *this;
-}
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::UnsignedAngle& mithep::UnsignedAngle::operator /= (double other)
+  {
+    fValue /= other;
+    FixRangeSlow();
+    return *this;
+  }
 
 // Other operations
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::UnsignedAngle operator + (double me, const mithep::UnsignedAngle& other)
+  {
+    mithep::UnsignedAngle result(me);
+    result += other;
+    return result;
+  }
 
-inline
-mithep::UnsignedAngle operator + (double me, const mithep::UnsignedAngle& other)
-{
-  mithep::UnsignedAngle result(me);
-  result += other;
-  return result;
-}
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::UnsignedAngle mithep::UnsignedAngle::operator + (const mithep::UnsignedAngle& other) const
+  {
+    mithep::UnsignedAngle result(*this);
+    result += other;
+    return result;
+  }
 
-inline
-mithep::UnsignedAngle mithep::UnsignedAngle::operator + (const mithep::UnsignedAngle& other) const
-{
-  mithep::UnsignedAngle result(*this);
-  result += other;
-  return result;
-}
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::UnsignedAngle mithep::UnsignedAngle::operator + (double other) const
+  {
+    return mithep::UnsignedAngle(fValue + other);
+  }
 
-inline
-mithep::UnsignedAngle mithep::UnsignedAngle::operator + (double other) const
-{
-  return mithep::UnsignedAngle(fValue + other);
-}
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::UnsignedAngle operator - (double me, const mithep::UnsignedAngle& other)
+  {
+    mithep::UnsignedAngle result(me);
+    result -= other;
+    return result;
+  }
 
-inline
-mithep::UnsignedAngle operator - (double me, const mithep::UnsignedAngle& other)
-{
-  mithep::UnsignedAngle result(me);
-  result -= other;
-  return result;
-}
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::UnsignedAngle mithep::UnsignedAngle::operator - (const mithep::UnsignedAngle& other) const
+  {
+    mithep::UnsignedAngle result(*this);
+    result -= other;
+    return result;
+  }
 
-inline
-mithep::UnsignedAngle mithep::UnsignedAngle::operator - (const mithep::UnsignedAngle& other) const
-{
-  mithep::UnsignedAngle result(*this);
-  result -= other;
-  return result;
-}
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::UnsignedAngle mithep::UnsignedAngle::operator - (double other) const
+  {
+    return mithep::UnsignedAngle(fValue - other);
+  }
 
-inline
-mithep::UnsignedAngle mithep::UnsignedAngle::operator - (double other) const
-{
-  return mithep::UnsignedAngle(fValue - other);
-}
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::UnsignedAngle mithep::UnsignedAngle::operator / (double other) const
+  {
+    mithep::UnsignedAngle result(*this);
+    result /= other;
+    return result;
+  }
 
-inline
-mithep::UnsignedAngle mithep::UnsignedAngle::operator / (double other) const
-{
-  mithep::UnsignedAngle result(*this);
-  result /= other;
-  return result;
-}
-
-inline
-mithep::UnsignedAngle mithep::UnsignedAngle::operator / (int other) const
-{
-  mithep::UnsignedAngle result(*this);
-  result /= other;
-  return result;
-}
-
+//--------------------------------------------------------------------------------------------------
+  inline
+  mithep::UnsignedAngle mithep::UnsignedAngle::operator / (int other) const
+  {
+    mithep::UnsignedAngle result(*this);
+    result /= other;
+    return result;
+  }
 } //close namespace here because of friend declarations
 #endif

@@ -1,19 +1,19 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: HelixIntersector.h,v 1.3 2008/09/04 13:55:30 loizides Exp $
+// $Id: HelixIntersector.h,v 1.1 2008/09/17 04:01:50 loizides Exp $
 //
 // Class HelixIntersector
 //
 // Finds the intersection of two tracks, it they do not intersect it finds the point of closest
 // approach.
 //
-// Author List: C.Paus (stolen from CDF implementation of E. Lipeles)
+// Author List: C.Paus (stolen from CDF implementation of E. Lipeles,
+//                      therefore not all our coding conventions fulfilled) 
 //--------------------------------------------------------------------------------------------------
 
 #ifndef MITCOMMON_MATHTOOLS_HELIXINTERSECTOR_H
 #define MITCOMMON_MATHTOOLS_HELIXINTERSECTOR_H
 
 #include <iostream>
-
 #include "MitCommon/MathTools/interface/Helix.h"
 
 namespace mithep 
@@ -34,8 +34,8 @@ namespace mithep
           // Sets the track and calculates center
           TrackParams(const TVectorD *params, const TVector3 *momentum);
 
-          const  TVector3& Momentum              () const { return fMomentum; }
-          const  TVector3& Center                () const { return fCenter;   }
+          const  TVector3 &Momentum              () const { return fMomentum; }
+          const  TVector3 &Center                () const { return fCenter;   }
           double           ArcLengthToInterection() const { return fArcLen;   }
           double           ZAtIntersection       () const { return fZAtISec;  }
 
