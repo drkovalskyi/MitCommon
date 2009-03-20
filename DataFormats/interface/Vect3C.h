@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Vect3C.h,v 1.2 2009/03/16 20:29:11 loizides Exp $
+// $Id: Vect3C.h,v 1.3 2009/03/20 12:54:20 loizides Exp $
 //
 // Vect3C
 //
@@ -31,6 +31,7 @@ namespace mithep
       Double_t            Phi()        const { return fPhi; }
       Double_t            Rho()        const { return fRho; }
       ThreeVectorC        V()          const { return ThreeVectorC(fRho,fEta,fPhi); }
+      void                Set(Double_t rho, Double_t eta, Double_t phi);
       void                SetXYZ(Double_t x, Double_t y, Double_t z);
 
     protected:
@@ -51,5 +52,15 @@ inline void mithep::Vect3C::SetXYZ(Double_t x, Double_t y, Double_t z)
   fRho=tmp.Rho();
   fEta=tmp.Eta();
   fPhi=tmp.Phi();
+}
+
+//--------------------------------------------------------------------------------------------------
+inline void mithep::Vect3C::Set(Double_t rho, Double_t eta, Double_t phi)
+{ 
+  // Set four vector.
+
+  fRho = rho;
+  fEta = eta;
+  fPhi = phi;
 }
 #endif
