@@ -1,8 +1,9 @@
-// $Id: MitCommonDataFormatsLinkDef.h,v 1.1 2008/09/27 05:44:11 loizides Exp $
+// $Id: MitCommonDataFormatsLinkDef.h,v 1.2 2009/03/08 12:00:54 loizides Exp $
 
 #ifndef MITCOMMON_DATAFORMATS_LINKDEF_H
 #define MITCOMMON_DATAFORMATS_LINKDEF_H
 
+#include "MitCommon/DataFormats/interface/Hist1DRat.h"
 #include "MitCommon/DataFormats/interface/Types.h"
 #include "MitCommon/DataFormats/interface/Vect3.h"
 #include "MitCommon/DataFormats/interface/Vect3C.h"
@@ -36,6 +37,7 @@
 #pragma link C++ typedef mithep::ThreeMatrix32;
 #pragma link C++ typedef mithep::SevenMatrix32;
 
+#pragma link C++ class mithep::Hist1DRat+;
 #pragma link C++ class mithep::Vect3+;
 #pragma link C++ class mithep::Vect3C+;
 #pragma link C++ class mithep::Vect4M+;
