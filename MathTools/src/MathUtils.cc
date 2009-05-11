@@ -1,4 +1,4 @@
-// $Id: MathUtils.cc,v 1.5 2009/02/18 15:38:26 loizides Exp $
+// $Id: MathUtils.cc,v 1.6 2009/03/20 13:33:19 loizides Exp $
 
 #include "MitCommon/MathTools/interface/MathUtils.h"
 
@@ -28,9 +28,18 @@ Double_t MathUtils::DeltaR(Double_t phi1, Double_t eta1, Double_t phi2, Double_t
 {
   // Compute DeltaR between two given points in the eta/phi plane.
 
+  Double_t dR = TMath::Sqrt(DeltaR2(phi1,eta1,phi2,eta2));
+  return(dR);
+}
+
+//--------------------------------------------------------------------------------------------------
+Double_t MathUtils::DeltaR2(Double_t phi1, Double_t eta1, Double_t phi2, Double_t eta2)
+{
+  // Compute DeltaR between two given points in the eta/phi plane.
+
   Double_t dphi = DeltaPhi(phi1, phi2);
   Double_t deta = eta1-eta2;
-  Double_t dR = TMath::Sqrt(dphi*dphi + deta*deta);
+  Double_t dR = dphi*dphi + deta*deta;
   return(dR);
 }
 

@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: MathUtils.h,v 1.6 2009/03/03 18:12:25 bendavid Exp $
+// $Id: MathUtils.h,v 1.7 2009/03/20 13:33:19 loizides Exp $
 //
 // MathUtils
 //
@@ -25,6 +25,9 @@ namespace mithep
       static Double_t DeltaR(Double_t phi1, Double_t eta1, Double_t phi2, Double_t eta2);
       template<class V1, class V2> 
       static Double_t DeltaR(const V1 &v1, const V2 &v2);
+      static Double_t DeltaR2(Double_t phi1, Double_t eta1, Double_t phi2, Double_t eta2);
+      template<class V1, class V2> 
+      static Double_t DeltaR2(const V1 &v1, const V2 &v2);
       static Double_t Eta2Theta(Double_t eta);
       static Double_t Theta2Eta(Double_t theta);
   };
@@ -46,5 +49,14 @@ Double_t mithep::MathUtils::DeltaR(const V1 &v1, const V2 &v2)
   // DeltaR between two given objects
 
   return mithep::MathUtils::DeltaR(v1.Phi(),v1.Eta(),v2.Phi(),v2.Eta());
+}
+
+//--------------------------------------------------------------------------------------------------
+template<class V1, class V2>
+Double_t mithep::MathUtils::DeltaR2(const V1 &v1, const V2 &v2)
+{
+  // DeltaR between two given objects
+
+  return mithep::MathUtils::DeltaR2(v1.Phi(),v1.Eta(),v2.Phi(),v2.Eta());
 }
 #endif
