@@ -1,4 +1,4 @@
-// $Id: MathUtils.cc,v 1.7 2009/05/11 08:23:06 loizides Exp $
+// $Id: TPFuncs.cc,v 1.1 2009/06/11 19:36:34 loizides Exp $
 
 #include "MitCommon/MathTools/interface/TPFuncs.h"
 #include <TF1.h>
@@ -166,9 +166,9 @@ Double_t TPFuncs::ExpRange(Double_t *x, Double_t *par)
 }
 
 //--------------------------------------------------------------------------------------------------
-Double_t TPFuncs::SigPlusB(Double_t *x, Double_t *par)
+Double_t TPFuncs::ZLineShapePlusBkg(Double_t *x, Double_t *par)
 { 
-  // Signal (BreitGaus) plus Background (ExpRange)
+  // Z line shape (BreitGaus) plus background (ExpRange).
 
   // Parameters:
   //  0: overall norm
@@ -191,11 +191,11 @@ Double_t TPFuncs::SigPlusB(Double_t *x, Double_t *par)
 }
 
 //--------------------------------------------------------------------------------------------------
-TF1 *TPFuncs::CreateSigPlusB(Double_t norm, Double_t xmin, Double_t xmax, const char *n)
+TF1 *TPFuncs::CreateZLineShapePlusBkg(Double_t norm, Double_t xmin, Double_t xmax, const char *n)
 {
-  // Create signal plus background TF1.
+  // Create TF1 for Z line shape and background.
 
-  TF1 *f = new TF1(n,mithep::TPFuncs::SigPlusB,xmin,xmax,10);
+  TF1 *f = new TF1(n,mithep::TPFuncs::ZLineShapePlusBkg,xmin,xmax,10);
   f->SetParName(0,"norm");
   f->SetParName(1,"f_sb");
   f->SetParName(2,"f_eb");
