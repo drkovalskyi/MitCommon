@@ -1,12 +1,12 @@
-// $Id: TPFuncs.cc,v 1.1 2009/06/11 19:36:34 loizides Exp $
+// $Id: Funcs.cc,v 1.2 2009/06/11 20:26:57 loizides Exp $
 
-#include "MitCommon/MathTools/interface/TPFuncs.h"
+#include "MitCommon/MathTools/interface/Funcs.h"
 #include <TF1.h>
 
 using namespace mithep;
 
 //--------------------------------------------------------------------------------------------------
-Double_t TPFuncs::BreitGaus(Double_t x, Double_t m, Double_t mwidth, Double_t msig, 
+Double_t Funcs::BreitGaus(Double_t x, Double_t m, Double_t mwidth, Double_t msig, 
                             Double_t fintf, Double_t xmin, Double_t xmax)
 {
   // Breit-Wigner convoluted with Gaussian.
@@ -60,7 +60,7 @@ Double_t TPFuncs::BreitGaus(Double_t x, Double_t m, Double_t mwidth, Double_t ms
 }
 
 //--------------------------------------------------------------------------------------------------
-Double_t TPFuncs::BreitGaus(Double_t *x, Double_t *par)
+Double_t Funcs::BreitGaus(Double_t *x, Double_t *par)
 {
   // Breit-Wigner convoluted with Gaussian.
   // Fit parameters:
@@ -85,7 +85,7 @@ Double_t TPFuncs::BreitGaus(Double_t *x, Double_t *par)
 }
 
 //--------------------------------------------------------------------------------------------------
-Double_t TPFuncs::BreitWignerZ(Double_t x, Double_t mean, Double_t gamma)
+Double_t Funcs::BreitWignerZ(Double_t x, Double_t mean, Double_t gamma)
 {
   // Breit-Wigner for Z peak.
 
@@ -95,7 +95,7 @@ Double_t TPFuncs::BreitWignerZ(Double_t x, Double_t mean, Double_t gamma)
 }
 
 //--------------------------------------------------------------------------------------------------
-Double_t TPFuncs::BreitWignerZ(Double_t *x, Double_t *par)
+Double_t Funcs::BreitWignerZ(Double_t *x, Double_t *par)
 {
   // Breit-Wigner for Z peak.
 
@@ -109,7 +109,7 @@ Double_t TPFuncs::BreitWignerZ(Double_t *x, Double_t *par)
 }
 
 //--------------------------------------------------------------------------------------------------
-Double_t TPFuncs::BreitWignerGamma(Double_t x, Double_t mean, Double_t gamma)
+Double_t Funcs::BreitWignerGamma(Double_t x, Double_t mean, Double_t gamma)
 {
   // Breit-Wigner for gamma interference.
 
@@ -119,7 +119,7 @@ Double_t TPFuncs::BreitWignerGamma(Double_t x, Double_t mean, Double_t gamma)
 }
 
 //--------------------------------------------------------------------------------------------------
-Double_t TPFuncs::BreitWignerGamma(Double_t *x, Double_t *par)
+Double_t Funcs::BreitWignerGamma(Double_t *x, Double_t *par)
 {
   // Breit-Wigner for gamma interference.
 
@@ -133,7 +133,7 @@ Double_t TPFuncs::BreitWignerGamma(Double_t *x, Double_t *par)
 }
 
 //--------------------------------------------------------------------------------------------------
-Double_t TPFuncs::ExpRange(Double_t mass, Double_t lambda, Double_t xmin, Double_t xmax)
+Double_t Funcs::ExpRange(Double_t mass, Double_t lambda, Double_t xmin, Double_t xmax)
 {
   // Probability of an exponential in a given interval.
 
@@ -151,7 +151,7 @@ Double_t TPFuncs::ExpRange(Double_t mass, Double_t lambda, Double_t xmin, Double
 }
 
 //--------------------------------------------------------------------------------------------------
-Double_t TPFuncs::ExpRange(Double_t *x, Double_t *par)
+Double_t Funcs::ExpRange(Double_t *x, Double_t *par)
 {
   // Probability of an exponential in a given interval.
 
@@ -166,7 +166,7 @@ Double_t TPFuncs::ExpRange(Double_t *x, Double_t *par)
 }
 
 //--------------------------------------------------------------------------------------------------
-Double_t TPFuncs::ZLineShapePlusBkg(Double_t *x, Double_t *par)
+Double_t Funcs::ZLineShapePlusBkg(Double_t *x, Double_t *par)
 { 
   // Z line shape (BreitGaus) plus background (ExpRange).
 
@@ -191,11 +191,11 @@ Double_t TPFuncs::ZLineShapePlusBkg(Double_t *x, Double_t *par)
 }
 
 //--------------------------------------------------------------------------------------------------
-TF1 *TPFuncs::CreateZLineShapePlusBkg(Double_t norm, Double_t xmin, Double_t xmax, const char *n)
+TF1 *Funcs::CreateZLineShapePlusBkg(Double_t norm, Double_t xmin, Double_t xmax, const char *n)
 {
   // Create TF1 for Z line shape and background.
 
-  TF1 *f = new TF1(n,mithep::TPFuncs::ZLineShapePlusBkg,xmin,xmax,10);
+  TF1 *f = new TF1(n,mithep::Funcs::ZLineShapePlusBkg,xmin,xmax,10);
   f->SetParName(0,"norm");
   f->SetParName(1,"f_sb");
   f->SetParName(2,"f_eb");

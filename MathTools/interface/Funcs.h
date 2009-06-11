@@ -1,9 +1,9 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: TPFuncs.h,v 1.1 2009/06/11 19:36:34 loizides Exp $
+// $Id: Funcs.h,v 1.2 2009/06/11 20:26:56 loizides Exp $
 //
-// TPFuncs
+// Funcs
 //
-// Function for tag-and-probe fits.
+// Function definitions.
 //
 // Authors: C.Loizides, G.Ceballos
 //--------------------------------------------------------------------------------------------------
@@ -18,7 +18,7 @@ class TF1;
 
 namespace mithep
 {
-  class TPFuncs {
+  class Funcs {
     public:
     static Double_t  BreitGaus(Double_t x, Double_t m, Double_t mwidth, Double_t msig, 
                                Double_t fintf, Double_t xmin, Double_t xmax);
