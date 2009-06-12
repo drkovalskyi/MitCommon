@@ -1,4 +1,4 @@
-// $Id: Funcs.cc,v 1.2 2009/06/11 20:26:57 loizides Exp $
+// $Id: Funcs.cc,v 1.1 2009/06/11 20:31:19 loizides Exp $
 
 #include "MitCommon/MathTools/interface/Funcs.h"
 #include <TF1.h>
@@ -212,12 +212,12 @@ TF1 *Funcs::CreateZLineShapePlusBkg(Double_t norm, Double_t xmin, Double_t xmax,
   f->SetParLimits(1,0,1);
   f->SetParLimits(2,0,1);
   f->SetParLimits(3,xmin,xmax);
-  f->SetParLimits(4,0.1,3);
+  f->SetParLimits(4,0.1,5);
   f->SetParLimits(5,0.1,3);
-  f->SetParLimits(6,0,0);
+  f->SetParLimits(6,0,1);
   f->SetParLimits(7,0,10);
-  f->SetParLimits(8,xmin,xmin);
-  f->SetParLimits(9,xmax,xmax);
+  f->FixParameter(8,xmin);
+  f->FixParameter(9,xmax);
 
   return f;
 }
