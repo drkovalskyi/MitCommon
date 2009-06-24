@@ -1,6 +1,9 @@
-// $Id: MathUtils.cc,v 1.6 2009/03/20 13:33:19 loizides Exp $
+// $Id: MathUtils.cc,v 1.7 2009/05/11 08:23:06 loizides Exp $
 
 #include "MitCommon/MathTools/interface/MathUtils.h"
+#include <TError.h>
+#include <TH1D.h>
+#include <TGraphAsymmErrors.h>
 
 using namespace mithep;
 
@@ -11,6 +14,32 @@ Double_t MathUtils::AddInQuadrature(Double_t a, Double_t b)
 
   return(TMath::Sqrt(a*a + b*b));
 }
+
+//--------------------------------------------------------------------------------------------------
+void MathUtils::CalcRatio(Double_t n1, Double_t n2, Double_t &r, Double_t &rlow, Double_t &rup)
+{
+  // Calculate ratio and lower/upper errors from given values using Bayes.
+  
+  if (n1>n2) {
+    Error("CalcRatio", "First value should be smaller than second: %f > %f", n1, n2);
+    r = n1/n2;
+    rlow = 0;
+    rup  = 0;
+    return;
+  }
+
+  TH1D h1("dummy1","",1,1,2);
+  h1.SetBinContent(1,n1);
+
+  TH1D h2("dummy2","",1,1,2);
+  h2.SetBinContent(1,n2);
+
+  TGraphAsymmErrors g;
+  g.BayesDivide(&h1,&h2);
+  r = g.GetY()[0];
+  rup = g.GetErrorYhigh(0);
+  rlow = g.GetErrorYlow(0);
+}	
 
 //--------------------------------------------------------------------------------------------------
 Double_t MathUtils::DeltaPhi(Double_t phi1, Double_t phi2)
