@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Funcs.h,v 1.2 2009/06/11 20:26:56 loizides Exp $
+// $Id: Funcs.h,v 1.1 2009/06/11 20:31:19 loizides Exp $
 //
 // Funcs
 //
@@ -8,8 +8,8 @@
 // Authors: C.Loizides, G.Ceballos
 //--------------------------------------------------------------------------------------------------
 
-#ifndef MITCOMMON_MATHTOOLS_TPFUNCS_H
-#define MITCOMMON_MATHTOOLS_TPFUNCS_H
+#ifndef MITCOMMON_MATHTOOLS_FUNCS_H
+#define MITCOMMON_MATHTOOLS_FUNCS_H
 
 #include "MitCommon/DataFormats/interface/Types.h"
 #include <TMath.h>
