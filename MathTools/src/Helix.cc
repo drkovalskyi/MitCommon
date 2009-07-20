@@ -1,7 +1,9 @@
-// $Id: Helix.cc,v 1.1 2008/09/17 04:01:50 loizides Exp $
+// $Id: Helix.cc,v 1.2 2009/03/20 13:33:19 loizides Exp $
 
 #include "MitCommon/MathTools/interface/Helix.h"
 #include <TSystem.h>
+
+ClassImp(mithep::Helix)
 
 using namespace mithep;
 

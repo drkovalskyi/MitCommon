@@ -1,7 +1,9 @@
-// $Id: Funcs.cc,v 1.1 2009/06/11 20:31:19 loizides Exp $
+// $Id: Funcs.cc,v 1.2 2009/06/12 08:08:42 ceballos Exp $
 
 #include "MitCommon/MathTools/interface/Funcs.h"
 #include <TF1.h>
+
+ClassImp(mithep::Funcs)
 
 using namespace mithep;
 

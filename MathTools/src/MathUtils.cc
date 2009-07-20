@@ -1,9 +1,11 @@
-// $Id: MathUtils.cc,v 1.7 2009/05/11 08:23:06 loizides Exp $
+// $Id: MathUtils.cc,v 1.8 2009/06/24 14:51:05 loizides Exp $
 
 #include "MitCommon/MathTools/interface/MathUtils.h"
 #include <TError.h>
 #include <TH1D.h>
 #include <TGraphAsymmErrors.h>
+
+ClassImp(mithep::MathUtils)
 
 using namespace mithep;
 
