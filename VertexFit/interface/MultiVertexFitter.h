@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: MultiVertexFitter.h,v 1.4 2008/11/13 16:54:07 paus Exp $
+// $Id: MultiVertexFitter.h,v 1.5 2009/03/20 13:33:03 loizides Exp $
 //
 // MultiVertexFitter class header file
 //
@@ -63,6 +63,8 @@
 //
 //                                   AddTrack was modified to implement this feature.
 //   Jul 18, 2008  Christoph Paus    Works for CMS and any other type of Helix fitting.
+//
+//   (This class was taken from CDF and does therefore not follow our coding conventions.)
 //--------------------------------------------------------------------------------------------------
 
 #ifndef MITCOMMON_VERTEXFIT_MULTIVERTEXFITTER_H

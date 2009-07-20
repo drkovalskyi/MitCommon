@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: MathUtils.h,v 1.8 2009/05/11 08:23:06 loizides Exp $
+// $Id: MathUtils.h,v 1.9 2009/06/24 14:51:04 loizides Exp $
 //
 // MathUtils
 //
@@ -32,6 +32,8 @@ namespace mithep
       static Double_t DeltaR2(const V1 &v1, const V2 &v2);
       static Double_t Eta2Theta(Double_t eta);
       static Double_t Theta2Eta(Double_t theta);
+
+    ClassDef(MathUtils, 0) // Math utitily functions
   };
 }
 

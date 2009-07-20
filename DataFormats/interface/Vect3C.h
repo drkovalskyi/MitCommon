@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Vect3C.h,v 1.3 2009/03/20 12:54:20 loizides Exp $
+// $Id: Vect3C.h,v 1.4 2009/03/20 18:52:08 bendavid Exp $
 //
 // Vect3C
 //
@@ -39,7 +39,7 @@ namespace mithep
       Double32_t          fEta; //[0,0,10]eta-component
       Double32_t          fPhi; //[0,0,10]phi-component
 
-    ClassDef(Vect3C, 1)
+    ClassDef(Vect3C, 1) // Implementation of our own ThreeVectorC32
   };
 }
 

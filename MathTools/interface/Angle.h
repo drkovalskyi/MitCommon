@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Angle.h,v 1.1 2008/09/17 04:01:50 loizides Exp $
+// $Id: Angle.h,v 1.2 2009/03/20 13:33:19 loizides Exp $
 //
 // Angle classes, with automatic range checking.  SignedAngle ranges from -PI to PI, UnsignedAngle
 // from 0 to 2PI.  The two types of angle convert implicitly into double.
@@ -41,8 +41,8 @@
 #ifndef MITCOMMON_MATHTOOLS_ANGLE_H
 #define MITCOMMON_MATHTOOLS_ANGLE_H
 
-#include <iostream>
-#include <limits>
+#include <Riostream.h>
+#include <Rtypes.h>
 #include <math.h>
 
 namespace mithep
@@ -94,6 +94,8 @@ namespace mithep
       void                 FixRangeSlow();
 
       double               fValue;
+
+    ClassDef(SignedAngle, 0) // Signed angle class
   };
 
 
@@ -144,6 +146,8 @@ namespace mithep
       void                 FixRangeSlow();
 
       double               fValue;
+
+    ClassDef(UnsignedAngle, 0) // Unsigned angle class
   };
 
 // By default, "Angles" are unsigned (CDF convention: 0-2PI range).

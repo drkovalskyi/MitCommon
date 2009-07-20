@@ -1,4 +1,4 @@
-// $Id: MitCommonMathToolsLinkDef.h,v 1.2 2009/06/11 20:31:19 loizides Exp $
+// $Id: MitCommonMathToolsLinkDef.h,v 1.3 2009/07/17 10:37:19 loizides Exp $
 
 #ifndef MITCOMMON_MATHTOOLS_LINKDEF_H
 #define MITCOMMON_MATHTOOLS_LINKDEF_H
@@ -18,10 +18,13 @@
 #pragma link C++ nestedtypedef;
 #pragma link C++ namespace mithep;
 
-#pragma link C++ class mithep::Funcs-;
-#pragma link C++ class mithep::Helix-;
-#pragma link C++ class mithep::HelixIntersector-;
-#pragma link C++ class mithep::MathUtils-;
-#pragma link C++ class mithep::SignedAngle-;
-#pragma link C++ class mithep::UnsignedAngle-;
+#pragma link C++ class mithep::Funcs;
+#pragma link C++ class mithep::Helix;
+#pragma link C++ class mithep::HelixIntersector;
+#pragma link C++ class mithep::HelixIntersector::TrackParams;
+#pragma link C++ class mithep::HelixIntersector::Intersection;
+#pragma link C++ class mithep::MathUtils;
+#pragma link C++ class mithep::SignedAngle;
+#pragma link C++ class mithep::UnsignedAngle;
+#pragma link C++ typedef mithep::Angle;
 #endif

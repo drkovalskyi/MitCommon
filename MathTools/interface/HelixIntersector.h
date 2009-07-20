@@ -1,10 +1,10 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: HelixIntersector.h,v 1.1 2008/09/17 04:01:50 loizides Exp $
+// $Id: HelixIntersector.h,v 1.2 2009/03/20 13:33:19 loizides Exp $
 //
 // Class HelixIntersector
 //
-// Finds the intersection of two tracks, it they do not intersect it finds the point of closest
-// approach.
+// Finds the intersection of two tracks. 
+// If they do not intersect it finds the point of closest approach.
 //
 // Author List: C.Paus (stolen from CDF implementation of E. Lipeles,
 //                      therefore not all our coding conventions fulfilled) 
@@ -53,10 +53,12 @@ namespace mithep
           double           fArcLen;
           double           fZAtISec;
           TVector3         fTrkMom;
+
+        ClassDef(TrackParams, 0) // Track parameter class
       };  
 
       //--------------------------------------------------------------------------------------------
-      // Class for Intesection results
+      // Class for Intersection results
       //--------------------------------------------------------------------------------------------
       class Intersection
       {
@@ -77,7 +79,8 @@ namespace mithep
         private:
           Intersection(const TVectorD *tr1, const TVector3 *momentum1,
                        const TVectorD *tr2, const TVector3 *momentum2);
-    
+          virtual ~Intersection() {}
+
           void               SetLocation(TVector3 &loc1, TVector3 &loc2);
 
           double             fDeltaZ;
@@ -86,6 +89,8 @@ namespace mithep
           TrackParams       *fTrks[2];
           TrackParams        fTrk0;
           TrackParams        fTrk1;
+
+        ClassDef(Intersection, 0) // Intersection result class
       };
 
       //--------------------------------------------------------------------------------------------
@@ -96,7 +101,7 @@ namespace mithep
                        const TVectorD *tr2, const TVector3 *momentum2);
 
       // Destructor
-      ~HelixIntersector();
+      virtual ~HelixIntersector();
 
       // Intersections or points of closest approach
       //   i = 0 or 1 (1 only if there are real intersections)
@@ -115,6 +120,8 @@ namespace mithep
       Intersection       *fISecs[2];
       Intersection        fISec0;
       Intersection        fISec1;
+
+    ClassDef(HelixIntersector, 0) // Helix intersection finder class
   };
 }
 #endif

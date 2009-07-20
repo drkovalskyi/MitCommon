@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Vect3.h,v 1.2 2009/03/16 20:29:11 loizides Exp $
+// $Id: Vect3.h,v 1.3 2009/03/20 12:54:20 loizides Exp $
 //
 // Vect3C
 //
@@ -38,7 +38,7 @@ namespace mithep
       Double32_t          fY; //[0,0,14]y-component
       Double32_t          fZ; //[0,0,14]z-component
 
-    ClassDef(Vect3, 1)
+    ClassDef(Vect3, 1) // Implementation of our own ThreeVector32
   };
 }
 

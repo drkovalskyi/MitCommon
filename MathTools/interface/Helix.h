@@ -1,9 +1,9 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Helix.h,v 1.1 2008/09/17 04:01:50 loizides Exp $
+// $Id: Helix.h,v 1.2 2009/03/20 13:33:19 loizides Exp $
 //
 // Class Helix
 //
-// Implementation nof a general helix class with a set of tools for working with objects like 
+// Implementation of a general helix class with a set of tools for working with objects like 
 // tracks and finding intersections (vertices).
 //
 // Author: C.Paus (stolen and adjusted from CDF implementation of Kurt Rinnert,
@@ -51,8 +51,6 @@ namespace mithep {
       virtual TVector3      Direction(double s = 0.0) const;
       //  the second derivative of the helix vs (three-dimensional) path length
       virtual TVector3      SecondDerivative(double s = 0.0) const;
-      // Get both position and direction at once.
-      //virtual void Location(Trajectory::Location &loc, double s = 0.0) const;
       // Get pathlength at fixed rho=sqrt(x^2 + y^2)
       virtual double        PathLengthAtRhoEquals(double rho) const;
 
@@ -134,6 +132,8 @@ namespace mithep {
   
       // Needed whenever fSs or fCc are used.
       inline void      fCacheSinesAndCosines(double s) const;
+
+    ClassDef(Helix, 0) // General helix class
   };
 }
 
