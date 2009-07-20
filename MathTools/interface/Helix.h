@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Helix.h,v 1.2 2009/03/20 13:33:19 loizides Exp $
+// $Id: Helix.h,v 1.3 2009/07/20 03:12:22 loizides Exp $
 //
 // Class Helix
 //
@@ -49,7 +49,7 @@ namespace mithep {
 
       virtual TVector3      Position(double s = 0.0) const;
       virtual TVector3      Direction(double s = 0.0) const;
-      //  the second derivative of the helix vs (three-dimensional) path length
+      // the second derivative of the helix vs (three-dimensional) path length
       virtual TVector3      SecondDerivative(double s = 0.0) const;
       // Get pathlength at fixed rho=sqrt(x^2 + y^2)
       virtual double        PathLengthAtRhoEquals(double rho) const;
@@ -346,7 +346,8 @@ void mithep::Helix::SetPhi0(Angle phi0)
 inline
 void mithep::Helix::SetParameters(const TVector &p)
 {
-  // Check we're getting a sensible vector
+  // Check we're getting a sensible vector.
+
   if (p.GetNrows() < 5) {
     return;
   }
