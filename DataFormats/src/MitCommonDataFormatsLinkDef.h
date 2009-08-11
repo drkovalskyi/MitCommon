@@ -1,4 +1,4 @@
-// $Id: MitCommonDataFormatsLinkDef.h,v 1.3 2009/04/29 15:14:06 loizides Exp $
+// $Id: MitCommonDataFormatsLinkDef.h,v 1.4 2009/08/10 16:04:51 phedex Exp $
 
 #ifndef MITCOMMON_DATAFORMATS_LINKDEF_H
 #define MITCOMMON_DATAFORMATS_LINKDEF_H
@@ -40,6 +40,7 @@
 
 #pragma link C++ class mithep::Hist1DRat+;
 #pragma link C++ class mithep::TH2DAsymErr+;
+#pragma link C++ enum mithep::TH2DAsymErr::EErrType;
 #pragma link C++ class mithep::Vect3+;
 #pragma link C++ class mithep::Vect3C+;
 #pragma link C++ class mithep::Vect4M+;
