@@ -1,9 +1,10 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: OptInt.h,v 1.4 2009/02/26 16:18:46 loizides Exp $
+// $Id: OptInt.h,v 1.5 2009/03/04 07:24:49 loizides Exp $
 //
 // OptInt
 //
-// Interface to set some of the optimized IO parameters.
+// Interface to set some of the optimized IO parameters. Use Compress or Decompress 
+// to compress or decompress data.
 //
 // The following zip modes are supported:
 //   Set ZipMode to be used in R__zip. Supported values range from 1 to 5, where
@@ -45,6 +46,9 @@ namespace mithep
     public:
       OptInt() {}
 
+      static Int_t  Compress(Int_t srcsize, char *src, Int_t tgtsize, char *tgt, 
+                             Int_t cl, Int_t method=-1);
+      static Int_t  DeCompress(Int_t srcsize, char *src, Int_t tgtsize, char *tgt); 
       static Bool_t IsActivated();
       static void   SetAlgoFractions(Double_t lzo, Double_t gz, Double_t bz, Double_t lzma);
       static void   SetBzipFraction(Double_t f);

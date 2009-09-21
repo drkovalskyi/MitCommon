@@ -1,4 +1,4 @@
-// $Id: OptInt.cc,v 1.3 2009/02/26 16:18:07 loizides Exp $
+// $Id: OptInt.cc,v 1.4 2009/03/04 07:24:50 loizides Exp $
 
 #include "MitCommon/OptIO/interface/OptInt.h"
 #include <TROOT.h>
@@ -12,6 +12,8 @@ ClassImp(mithep::OptInt)
 using namespace mithep;
 
 extern "C" void R__SetZipMode(int zipmode);
+extern "C" void R__myzip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *irep);
+extern "C" void R__myunzip(int *srcsize, char *src, int *tgtsize, char *tgt, int *irep);
 
 extern int activated;
 extern double lzipfrac;
@@ -20,6 +22,38 @@ extern double bzipfrac;
 extern double lzmafrac;
 extern int myverbose;
 extern int mystaticm;
+extern int R__ZipMode;
+
+
+//--------------------------------------------------------------------------------------------------
+Int_t OptInt::Compress(Int_t srcsize, char *src, Int_t tgtsize, char *tgt, Int_t cl, Int_t method)
+{
+  // Compress given buffer and return compressed size.
+
+  Int_t zm = R__ZipMode;
+  if (method>-1) {
+    R__SetZipMode(method);
+  }
+
+  Int_t size = 0;
+  R__myzip(cl, &srcsize, src, &tgtsize, tgt, &size);
+
+  if (method>-1) {
+    R__SetZipMode(zm);
+  }
+
+  return size;
+}
+
+//--------------------------------------------------------------------------------------------------
+Int_t OptInt::DeCompress(Int_t srcsize, char *src, Int_t tgtsize, char *tgt)
+{
+  // Decompress given buffer and return decompressed size.
+
+  Int_t size = 0;
+  R__myunzip(&srcsize, src, &tgtsize, tgt, &size);
+  return size;
+}
 
 //--------------------------------------------------------------------------------------------------
 Bool_t OptInt::IsActivated()

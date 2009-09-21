@@ -1,4 +1,4 @@
-// $Id: rzipunzip.c,v 1.5 2009/02/27 17:39:30 bendavid Exp $
+// $Id: rzipunzip.c,v 1.6 2009/03/04 07:24:50 loizides Exp $
 
 #include "MitCommon/OptIO/src/rzipunzip.h"
 #include "MitCommon/OptIO/src/zlib.h"
@@ -65,25 +65,37 @@ void mymfree(void *ptr)
   free(ptr);
 }
 
-// memory handle functions
+//--------------------------------------------------------------------------------------------------
 static void *SzAlloc(void *p, size_t size) { p = p; return mymalloc(size); }
+
+//--------------------------------------------------------------------------------------------------
 static void SzFree(void *p, void *address) { p = p; mymfree(address); }
+
+//--------------------------------------------------------------------------------------------------
 static ISzAlloc g_Alloc = { SzAlloc, SzFree };
+
+//--------------------------------------------------------------------------------------------------
 static void* my_balloc (void* opaque, int items, int size)
 {
   opaque = opaque; 
   return mymalloc(items*size);
 }
+
+//--------------------------------------------------------------------------------------------------
 static void my_bfree (void* opaque, void* addr)
 {
   opaque = opaque;
   mymfree(addr);
 }
+
+//--------------------------------------------------------------------------------------------------
 static voidpf my_zalloc OF((voidpf opaque, unsigned items, unsigned size))
 {
   opaque = opaque; 
   return mymalloc(items*size);
 }
+
+//--------------------------------------------------------------------------------------------------
 static void my_zfree  OF((voidpf opaque, voidpf ptr))
 {
   opaque = opaque;
@@ -103,6 +115,7 @@ void delta_encode(char *buffer, int length)
   }
 }
  
+//--------------------------------------------------------------------------------------------------
 void delta_decode(char *buffer, int length)
 {
   char t = 0;
@@ -114,7 +127,7 @@ void delta_decode(char *buffer, int length)
 }
 
 //--------------------------------------------------------------------------------------------------
-void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *irep)
+void R__myzip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *irep)
      /* int cxlevel;                      compression level */
      /* int  *srcsize, *tgtsize, *irep;   source and target sizes, replay */
      /* char *tgt, *src;                  source and target buffers */
@@ -485,14 +498,22 @@ void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *
   *irep = out_size + HDRSIZE;
 
   if (myverbose==1||myverbose>9) {
-    printf("R__zip:: zm=%d m=%d cl=%d: %c%c compressed %lu bytes into %lu bytes -> %.3f%%\n", 
+    printf("R__myzip:: zm=%d m=%d cl=%d: %c%c compressed %lu bytes into %lu bytes -> %.3f%%\n", 
            R__ZipMode, method, cxlevel, tgt[0], tgt[1], 
            (unsigned long)in_size, (unsigned long)out_size, (double)out_size/in_size*100.);
   }
 }
 
 //--------------------------------------------------------------------------------------------------
-void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
+void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *irep)
+{
+  // Overwrite ROOT R__zip.
+
+  R__myzip(cxlevel, srcsize, src, tgtsize, tgt, irep);
+}
+
+//--------------------------------------------------------------------------------------------------
+void R__myunzip(int *srcsize, char *src, int *tgtsize, char *tgt, int *irep)
     /* Input: scrsize - size of input buffer                               */
     /*        src     - input buffer                                       */
     /*        tgtsize - size of target buffer                              */
@@ -502,19 +523,19 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
 {
   unsigned int osize   = 0;
   unsigned int ibufcnt = 0, obufcnt = 0;
-  uch  *ibufptr = 0, *obufptr = 0;
+  char  *ibufptr = 0, *obufptr = 0;
   *irep = 0L;
 
   /*   C H E C K   H E A D E R   */
   if (*srcsize < HDRSIZE) {
-    fprintf(stderr,"R__unzip: too small source\n");
+    fprintf(stderr,"R__myunzip: too small source\n");
     return;
   }
 
   char method = src[2];
   if (method!=0  && method!= 2 && method!= 3 && method!= 4 && method!=Z_DEFLATED && 
       method!=11 && method!=12 && method!=15 && method!=19) {
-    fprintf(stderr,"R__unzip: error in header -> unknown method %d\n", method);
+    fprintf(stderr,"R__myunzip: error in header -> unknown method %d\n", method);
     return;
   }
 
@@ -526,7 +547,7 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
                               (src[0] != 'Z' || src[1] != 'L')))   ||
       ((method==11 || method==12 || method==15 || method==19)  && 
        (src[0] != 'L' || src[1] != 'O'))) {
-    fprintf(stderr,"R__unzip: error in header -> m=%d with %c%c\n",
+    fprintf(stderr,"R__myunzip: error in header -> m=%d with %c%c\n",
             method, src[0], src[1]);
     return;
   }
@@ -538,23 +559,23 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
   obufcnt = *tgtsize;
 
   if (obufcnt < osize) {
-    fprintf(stderr,"R__unzip: too small target\n");
+    fprintf(stderr,"R__myunzip: too small target\n");
     return;
   }
 
   if (ibufcnt + HDRSIZE != *srcsize) {
-    fprintf(stderr,"R__unzip: discrepancy in source length\n");
+    fprintf(stderr,"R__myunzip: discrepancy in source length\n");
     return;
   }
 
   if (myverbose==2 || myverbose>9) {
-    printf("R__unzip:: zm=%d m=%d: %c%c uncompressed %lu bytes from %lu bytes (%.3f%%)\n", 
+    printf("R__myunzip:: zm=%d m=%d: %c%c uncompressed %lu bytes from %lu bytes (%.3f%%)\n", 
            R__ZipMode, method, src[0], src[1], osize, ibufcnt, (double)ibufcnt/osize*100.);
   }
 
   if (method==0) { // apparently this is not reached since underlying ROOT code catches this
     if (ibufcnt!=osize) {
-      fprintf(stderr,"R__unzip: error in header -> input should be output %d!=%d\n", 
+      fprintf(stderr,"R__myunzip: error in header -> input should be output %d!=%d\n", 
               ibufcnt, osize);
       return;
     }
@@ -597,7 +618,7 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
     res = LzmaDecode(obufptr, &obufcnt, ibufptr, &new_len, hptr, hsize, 
                      LZMA_FINISH_END, &status, &g_Alloc);
     if (res!=SZ_OK) {
-      fprintf(stderr,"R__unzip: error %d in LzmaDecode (lzolib)\n", res);
+      fprintf(stderr,"R__myunzip: error %d in LzmaDecode (lzolib)\n", res);
       mymfree(hptr);
       return;
     }
@@ -611,13 +632,13 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
 
     int err = lzo_init(); 
     if ( err != LZO_E_OK) {
-      fprintf(stderr,"R__unzip: error %d in lzo_init (lzolib)\n",err);
+      fprintf(stderr,"R__myunzip: error %d in lzo_init (lzolib)\n",err);
       return;
     }
     lzo_uint new_len = obufcnt;
     err = lzo1x_decompress(ibufptr,ibufcnt,obufptr,&new_len, NULL);
     if ((err != LZO_E_OK) || (new_len!=osize)) {
-      fprintf(stderr,"R__unzip: error %d (%d,%d) in lzo1x_decompress (lzolib)\n",
+      fprintf(stderr,"R__myunzip: error %d (%d,%d) in lzo1x_decompress (lzolib)\n",
               err, new_len, osize);
       return;
     }
@@ -634,12 +655,12 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
 
     int err = BZ2_bzDecompressInit(&stream,0,0);
     if (err != BZ_OK) {
-      fprintf(stderr,"R__unzip: error %d in BZ2_bzDecompressInit (bzlib)\n",err);
+      fprintf(stderr,"R__myunzip: error %d in BZ2_bzDecompressInit (bzlib)\n",err);
       return;
     }
     err = BZ2_bzDecompress(&stream);
     if (err != BZ_STREAM_END) {
-      fprintf(stderr,"R__unzip: error %d inBZ2_bzDecompress (bzlib)\n",err);
+      fprintf(stderr,"R__myunzip: error %d inBZ2_bzDecompress (bzlib)\n",err);
       BZ2_bzDecompressEnd(&stream);
       return;
     }
@@ -657,27 +678,27 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
 
     int err = inflateInit(&stream);
     if (err != Z_OK) {
-      fprintf(stderr,"R__unzip: error %d in inflateInit (zlib)\n",err);
+      fprintf(stderr,"R__myunzip: error %d in inflateInit (zlib)\n",err);
       return;
     }
     err = inflate(&stream, Z_FINISH);
     if (err != Z_STREAM_END) {
       inflateEnd(&stream);
-      fprintf(stderr,"R__unzip: error %d in inflate (zlib)\n",err);
+      fprintf(stderr,"R__myunzip: error %d in inflate (zlib)\n",err);
       return;
     }
     inflateEnd(&stream);
     *irep = stream.total_out;
   } else if (src[0] == 'C' && src[1] == 'S') { /* old zlib format */
     if (R__Inflate(&ibufptr, &ibufcnt, &obufptr, &obufcnt)) {
-      fprintf(stderr,"R__unzip: error during decompression\n");
+      fprintf(stderr,"R__myunzip: error during decompression\n");
       return;
     }
 
     /* if (obufptr - tgt != osize) {
        There are some rare cases when a few more bytes are required */
     if (obufptr - tgt > *tgtsize) {
-      fprintf(stderr,"R__unzip: discrepancy (%ld) with initial size: %ld, tgtsize=%d\n",
+      fprintf(stderr,"R__myunzip: discrepancy (%ld) with initial size: %ld, tgtsize=%d\n",
               (long)(obufptr - tgt),osize,*tgtsize);
       *irep = obufptr - tgt;
       return;
@@ -685,7 +706,15 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
     *irep = osize;
     return;
   } else {
-    fprintf(stderr,"R__unzip: Format not supported -> m=%d with %d%d", method, src[0], src[1]);
+    fprintf(stderr,"R__myunzip: Format not supported -> m=%d with %d%d", method, src[0], src[1]);
     return;
   }
+}
+
+//--------------------------------------------------------------------------------------------------
+void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
+{
+  // Overwrite ROOT R__unzip.
+
+  R__myunzip(srcsize, (char*)src, tgtsize, (char*)tgt, irep);
 }
