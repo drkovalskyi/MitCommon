@@ -1,4 +1,4 @@
-// $Id: rzipunzip.c,v 1.6 2009/03/04 07:24:50 loizides Exp $
+// $Id: rzipunzip.c,v 1.7 2009/09/21 19:30:00 loizides Exp $
 
 #include "MitCommon/OptIO/src/rzipunzip.h"
 #include "MitCommon/OptIO/src/zlib.h"
@@ -127,7 +127,7 @@ void delta_decode(char *buffer, int length)
 }
 
 //--------------------------------------------------------------------------------------------------
-void R__myzip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *irep)
+void R__myzip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *irep, int la)
      /* int cxlevel;                      compression level */
      /* int  *srcsize, *tgtsize, *irep;   source and target sizes, replay */
      /* char *tgt, *src;                  source and target buffers */
@@ -137,18 +137,23 @@ void R__myzip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int
   unsigned int in_size  = 0;
   unsigned int out_size = 0;
 
-  if (*tgtsize <= HDRSIZE) {
-    R__error("target buffer too small");
+  int hsize = HDRSIZE;
+  if (la) 
+    hsize += 2;
+
+  if (*tgtsize <= hsize) {
+    printf("target buffer too small %d %d\n",*tgtsize, hsize);
     return;
   }
-  if (*srcsize > 0xffffff) {
-    R__error("source buffer too big");
+
+  if ((la && *srcsize > 0xffffffff) || (!la && *srcsize > 0xffffff)) {
+    printf("source buffer too big %d",*srcsize);
     return;
   }
 
   *irep        = 0;
   in_size      = (unsigned)(*srcsize); /* decompressed size */
-  char *tgtptr = tgt+HDRSIZE;          /* compress data     */
+  char *tgtptr = tgt+hsize;            /* compress data     */
 
   if (R__ZipMode == 99) { /*determine best of all methods*/
     int cont    = 1;
@@ -492,10 +497,17 @@ void R__myzip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int
   tgt[3] = (char)(out_size & 0xff);
   tgt[4] = (char)((out_size >> 8) & 0xff);
   tgt[5] = (char)((out_size >> 16) & 0xff);
-  tgt[6] = (char)(in_size & 0xff);         
-  tgt[7] = (char)((in_size >> 8) & 0xff);
-  tgt[8] = (char)((in_size >> 16) & 0xff);
-  *irep = out_size + HDRSIZE;
+  int off = 0;
+  if (la) {
+    tgt[6]  = (char)((out_size >> 24) & 0xff);
+    tgt[10] = (char)((in_size >> 24) & 0xff);
+    off = 1;
+  } 
+  tgt[6+off] = (char)(in_size & 0xff);         
+  tgt[7+off] = (char)((in_size >> 8) & 0xff);
+  tgt[8+off] = (char)((in_size >> 16) & 0xff);
+
+  *irep = out_size + hsize;
 
   if (myverbose==1||myverbose>9) {
     printf("R__myzip:: zm=%d m=%d cl=%d: %c%c compressed %lu bytes into %lu bytes -> %.3f%%\n", 
@@ -509,11 +521,11 @@ void R__zip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int *
 {
   // Overwrite ROOT R__zip.
 
-  R__myzip(cxlevel, srcsize, src, tgtsize, tgt, irep);
+  R__myzip(cxlevel, srcsize, src, tgtsize, tgt, irep, 0);
 }
 
 //--------------------------------------------------------------------------------------------------
-void R__myunzip(int *srcsize, char *src, int *tgtsize, char *tgt, int *irep)
+void R__myunzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep, int la)
     /* Input: scrsize - size of input buffer                               */
     /*        src     - input buffer                                       */
     /*        tgtsize - size of target buffer                              */
@@ -523,12 +535,16 @@ void R__myunzip(int *srcsize, char *src, int *tgtsize, char *tgt, int *irep)
 {
   unsigned int osize   = 0;
   unsigned int ibufcnt = 0, obufcnt = 0;
-  char  *ibufptr = 0, *obufptr = 0;
+  unsigned char  *ibufptr = 0, *obufptr = 0;
   *irep = 0L;
 
+  int hsize = HDRSIZE;
+  if (la) 
+    hsize += 2;
+
   /*   C H E C K   H E A D E R   */
-  if (*srcsize < HDRSIZE) {
-    fprintf(stderr,"R__myunzip: too small source\n");
+  if (*srcsize < hsize) {
+    fprintf(stderr,"R__myunzip: too small source %d %d\n",*srcsize,hsize);
     return;
   }
 
@@ -552,19 +568,26 @@ void R__myunzip(int *srcsize, char *src, int *tgtsize, char *tgt, int *irep)
     return;
   }
 
-  ibufptr = src + HDRSIZE;
-  ibufcnt = (unsigned int)src[3] | ((unsigned int)src[4] << 8) | ((unsigned int)src[5] << 16);
-  osize   = (unsigned int)src[6] | ((unsigned int)src[7] << 8) | ((unsigned int)src[8] << 16);
+  ibufptr = src + hsize;
+  if (la) {
+    ibufcnt = (unsigned int)src[3] | ((unsigned int)src[4] << 8) | 
+      ((unsigned int)src[5] << 16) | ((unsigned int)src[6] << 24);
+    osize   = (unsigned int)src[7] | ((unsigned int)src[8] << 8) | 
+      ((unsigned int)src[9] << 16) | ((unsigned int)src[10] << 24);
+  } else {
+    ibufcnt = (unsigned int)src[3] | ((unsigned int)src[4] << 8) | ((unsigned int)src[5] << 16);
+    osize   = (unsigned int)src[6] | ((unsigned int)src[7] << 8) | ((unsigned int)src[8] << 16);
+  }
   obufptr = tgt;
   obufcnt = *tgtsize;
 
   if (obufcnt < osize) {
-    fprintf(stderr,"R__myunzip: too small target\n");
+    fprintf(stderr,"R__myunzip: too small target %d %d\n",obufcnt,osize);
     return;
   }
 
-  if (ibufcnt + HDRSIZE != *srcsize) {
-    fprintf(stderr,"R__myunzip: discrepancy in source length\n");
+  if (ibufcnt + hsize != *srcsize) {
+    fprintf(stderr,"R__myunzip: discrepancy in source length %d %d\n",ibufcnt + hsize,*srcsize);
     return;
   }
 
@@ -668,7 +691,7 @@ void R__myunzip(int *srcsize, char *src, int *tgtsize, char *tgt, int *irep)
     *irep = stream.total_out_lo32;
   } else if (src[0] == 'Z' && src[1] == 'L') { /* zlib format */
     z_stream stream; /* decompression stream */
-    stream.next_in   = (Bytef*)(&src[HDRSIZE]);
+    stream.next_in   = (Bytef*)(&src[hsize]);
     stream.avail_in  = (uInt)(*srcsize);
     stream.next_out  = (Bytef*)tgt;
     stream.avail_out = (uInt)(*tgtsize);
@@ -716,5 +739,5 @@ void R__unzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep)
 {
   // Overwrite ROOT R__unzip.
 
-  R__myunzip(srcsize, (char*)src, tgtsize, (char*)tgt, irep);
+  R__myunzip(srcsize, src, tgtsize, tgt, irep, 0);
 }
