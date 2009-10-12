@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: MultiVertexFitterD.h,v 1.1 2008/11/13 16:34:28 paus Exp $
+// $Id: MultiVertexFitterD.h,v 1.2 2009/03/20 13:33:03 loizides Exp $
 //
 // MultiVertexFitterD class header file
 //
@@ -85,8 +85,8 @@ namespace mithep {
       //
       // Incidentally this is the ordering used in the CDF experiment.
       //--------------------------------------------------------------------------------------------
-      bool addTrack             (const HepVector &pars, const HepSymMatrix &cov, int trackid,
-                                 float mass, vertexNumber jv);
+      bool addTrack             (const CLHEP::HepVector &pars, const CLHEP::HepSymMatrix &cov, 
+                                 int trackid, float mass, vertexNumber jv);
 
       bool addTrack             (const TVectorD &pars, const TMatrixDSym &cov, int trackid,
                                  double mass, vertexNumber jv);
@@ -101,8 +101,8 @@ namespace mithep {
       bool massConstrain        (int ntrk, const int trkIds[], float mass);
 
       void setPrimaryVertex     (float xv, float yv, float zv);
-      void setPrimaryVertex     (Hep3Vector pv);
-      bool setPrimaryVertexError(const HepSymMatrix &xverr);
+      void setPrimaryVertex     (CLHEP::Hep3Vector pv);
+      bool setPrimaryVertexError(const CLHEP::HepSymMatrix &xverr);
       void setPrimaryVertexError(const float xverr[3][3]);
 
       bool fit                  ();
@@ -139,8 +139,10 @@ namespace mithep {
       // For help email: Joao Guimaraes  guima@huhepl.harvard.edu, Franco Bedeschi bed@fnal.gov 
       // See more information in the ctvmft.f
       // -------------------------------------------------------------------------------------------
-      bool beamlineConstraint(float xb, float yb, HepSymMatrix berr,float xzbslope,float yzbslope);
-      bool beamlineConstraint(Hep3Vector pv, HepSymMatrix berr, float xzbslope, float yzbslope);
+      bool beamlineConstraint(float xb, float yb, CLHEP::HepSymMatrix berr,
+                              float xzbslope,float yzbslope);
+      bool beamlineConstraint(CLHEP::Hep3Vector pv, CLHEP::HepSymMatrix berr, 
+                              float xzbslope, float yzbslope);
 
       //--------------------------------------------------------------------------------------------
       // Accessors
@@ -151,12 +153,12 @@ namespace mithep {
       void             setExcuse  ();
       void             setNoExcuse();
 
-      std::string      expert     () const;                // name/email of MultiVertexFitter expert
-      int              status     () const;                // return status of fit
+      std::string      expert     () const;             // name/email of MultiVertexFitter expert
+      int              status     () const;             // return status of fit
       // overall fit quality paramters
-      int              ndof       () const;                // number of degrees of freedom
-      float            prob       () const;                // return probability of chi-square
-      float            chisq      () const;                // return chi-square of fit
+      int              ndof       () const;             // number of degrees of freedom
+      float            prob       () const;             // return probability of chi-square
+      float            chisq      () const;             // return chi-square of fit
       float            chisq      (const int trkId) const;
       float            chisq_rphi () const;
       float            chisq_rphi (const int trkId) const;
@@ -166,41 +168,38 @@ namespace mithep {
       float            chisq_rphiz(const int trkId) const;
 
       // return fit track four momentum
-      //HepLorentzVector getTrackP4       (const int trkId) const;
       FourVector       getTrackP4       (const int trkId) const;
-
-      //// return fit track parameters
-      //Helix            getHelix         (const int trkId) const;
 
       // return fit mass and get error
       float            getMass          (int ntrk, const int trkIds[], float& dmass) const;
 
       // return decay length
-      float            getDecayLength   (vertexNumber nv, vertexNumber mv, const Hep3Vector& dir,
+      float            getDecayLength   (vertexNumber nv, vertexNumber mv, 
+                                         const CLHEP::Hep3Vector& dir,
 					 float& dlerr) const;
       float            getDecayLength   (vertexNumber nv, vertexNumber mv, const ThreeVector& dir,
 					 float& dlerr) const;                                      
       float            getZDecayLength  (vertexNumber nv, vertexNumber mv,
-					 const Hep3Vector& dir, float& dlerr) const;  
+					 const CLHEP::Hep3Vector& dir, float& dlerr) const;  
       float            getZDecayLength  (vertexNumber nv, vertexNumber mv,
 					 const ThreeVector& dir, float& dlerr) const;
       float            getImpactPar     (vertexNumber prdV, vertexNumber dcyV,
-					 const Hep3Vector &v, float &dxyerr) const;     
+					 const CLHEP::Hep3Vector &v, float &dxyerr) const;     
       float            getImpactPar     (vertexNumber prdV, vertexNumber dcyV,
-					 const ThreeVector &v, float &dxyerr) const;                      
+					 const ThreeVector &v, float &dxyerr) const;
       float            get_dr           (vertexNumber nv, vertexNumber mv, float& drerr) const;
       float            get_dz           (vertexNumber nv, vertexNumber mv, float& dzerr) const;
 
       // return location of vertex
-      Hep3Vector       getVertexHep     (vertexNumber nv) const;
-      ThreeVector      getVertex        (vertexNumber nv) const;
+      CLHEP::Hep3Vector   getVertexHep     (vertexNumber nv) const;
+      ThreeVector         getVertex        (vertexNumber nv) const;
 
       // return error matrix element.
-      ThreeSymMatrix   getErrorMatrix   (vertexNumber nv) const;
-      double           getErrorMatrixHep(int j, int k) const;
-      HepSymMatrix     getErrorMatrixHep(vertexNumber nv) const;
-      HepSymMatrix     getErrorMatrixHep(const int trkId) const;
-      void             getPosMomErr     (HepMatrix& errors) const;
+      ThreeSymMatrix      getErrorMatrix   (vertexNumber nv) const;
+      double              getErrorMatrixHep(int j, int k) const;
+      CLHEP::HepSymMatrix getErrorMatrixHep(vertexNumber nv) const;
+      CLHEP::HepSymMatrix getErrorMatrixHep(const int trkId) const;
+      void                getPosMomErr     (CLHEP::HepMatrix& errors) const;
       int              vOff             (vertexNumber jv) const;
       int              tOff             (const int trkId) const;
       int              pOff             (int lp) const;
@@ -209,7 +208,7 @@ namespace mithep {
       double           VMat             (int i, int j) const;
       float            getPtError       (const int trkId) const;
       MultiVertexFitterD::vertexNumber
-	allocateVertexNumber();
+	               allocateVertexNumber();
       void             resetAllocatedVertexNumber();
 
       // Accessors for getting information relative to ijk errors.
@@ -336,28 +335,16 @@ namespace mithep {
       TRKPRM   _trkprm;
       TRKPRM*  _trkprm_com;
 
-      //--------------------------------------------------------------------------------------------
-      // Private functions used by class
-      //--------------------------------------------------------------------------------------------
-
     private:
-
-      // Moves reference point of track parameters and errors to _referencePoint
-      //void moveReferencePoint(HepVector &v, HepSymMatrix &m);
-      // Moves reference point of track parameters and errors to _referencePoint.  Additionally 
-      //checks if track has already been moved by examining it's "derived" link
-      //void moveReferencePoint(const CdfTrack *trk, HepVector &v, HepSymMatrix &m);
-
       //--------------------------------------------------------------------------------------------
       // Data members of class
       //--------------------------------------------------------------------------------------------
-      double      _bField;                        // B field in Tesla
-
-      int         _currentAllocatedVertexNumber;  // index to enum vertexNumber
-      ThreeVector _referencePoint;                // reference point of track
-      Hep3Vector  _primaryVertex;                 // primary vertex relative to _referencePoint
-      Hep3Vector  _cdfPrimaryVertex;              // primary vertex in CDF coordinate system
-      bool        _extrapolateTrackErrors;        // extrapolate track errors to _referencePoint
+      double            _bField;                       // B field in Tesla
+      int               _currentAllocatedVertexNumber; // index to enum vertexNumber
+      ThreeVector       _referencePoint;               // reference point of track
+      CLHEP::Hep3Vector _primaryVertex;                // primary vertex relative to _referencePoint
+      CLHEP::Hep3Vector _cdfPrimaryVertex;             // primary vertex in CDF coordinate system
+      bool              _extrapolateTrackErrors;       // extrapolate track errors _referencePoint
   };
 }
 

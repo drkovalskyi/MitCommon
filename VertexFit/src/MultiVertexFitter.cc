@@ -1,4 +1,4 @@
-// $Id: MultiVertexFitter.cc,v 1.3 2008/11/13 16:34:29 paus Exp $
+// $Id: MultiVertexFitter.cc,v 1.4 2009/03/20 13:33:03 loizides Exp $
 
 #include "MitCommon/VertexFit/interface/MultiVertexFitter.h"
 #include <algorithm>
@@ -15,6 +15,7 @@ extern "C" void  dcalc_ (int&, int&, float*, float&, float&, float*);
 
 using namespace std;
 using namespace mithep;
+using namespace CLHEP;
 
 jmp_buf env;
 
