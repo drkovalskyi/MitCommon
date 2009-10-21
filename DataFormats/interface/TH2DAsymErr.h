@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: $
+// $Id: TH2DAsymErr.h,v 1.2 2009/08/11 09:02:24 loizides Exp $
 //
 // TH2DAsymErr
 //
@@ -35,10 +35,10 @@ namespace mithep
 
       using TH2D::GetBinContent;
       Double_t      GetError(Double_t x, Double_t y, EErrType t);
-      Double_t        GetStatErrorLow(Double_t x, Double_t y) { return GetError(x,y,kStatErrLow);  }
+      Double_t      GetStatErrorLow(Double_t x, Double_t y)   { return GetError(x,y,kStatErrLow);  }
       Double_t      GetStatErrorHigh(Double_t x, Double_t y)  { return GetError(x,y,kStatErrHigh); }
-      Double_t        GetSysErrorLow(Double_t x, Double_t y)  { return GetError(x,y,kSysErrLow);   }
-      Double_t        GetSysErrorHigh(Double_t x, Double_t y) { return GetError(x,y,kSysErrHigh);  }
+      Double_t      GetSysErrorLow(Double_t x, Double_t y)    { return GetError(x,y,kSysErrLow);   }
+      Double_t      GetSysErrorHigh(Double_t x, Double_t y)   { return GetError(x,y,kSysErrHigh);  }
       using TH2D::SetBinContent;
       void          SetBinContent(Int_t binx, Int_t biny, Double_t value, 
                                   Double_t statErrorLow, Double_t statErrorHigh,
