@@ -1,11 +1,13 @@
-// $Id: TH2DAsymErr.cc,v 1.1 2009/08/10 16:04:51 phedex Exp $
+// $Id: TH2DAsymErr.cc,v 1.2 2009/08/11 09:02:24 loizides Exp $
 
 #include "MitCommon/DataFormats/interface/TH2DAsymErr.h"
 #include <TList.h>
+#include <iostream>
 
 ClassImp(mithep::TH2DAsymErr)
 
 using namespace mithep;
+using namespace std;
 
 //--------------------------------------------------------------------------------------------------
 TH2DAsymErr::TH2DAsymErr(const char *name, const char *title, 
@@ -35,7 +37,11 @@ Double_t TH2DAsymErr::GetError(Double_t x, Double_t y, EErrType t)
 {
   // Get error corresponding to x and y for given error type.
 
-  Int_t bin = FindBin(x,y);
+  Int_t nx = fXaxis.GetNbins()+2;
+  Int_t binx = fXaxis.FindFixBin(x);
+  Int_t biny = fYaxis.FindFixBin(y);
+  Int_t bin = binx + nx*biny; 
+
   switch (t) {
     case kStatErrLow:
       return fStatErrorLow.fArray[bin];
@@ -67,6 +73,7 @@ void TH2DAsymErr::SetBinContent(Int_t binx, Int_t biny, Double_t value,
   fStatErrorHigh.fArray[bin] = statErrorHigh;
   fSysErrorLow.fArray[bin]   = sysErrorLow;
   fSysErrorHigh.fArray[bin]  = sysErrorHigh;
+  return;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -82,4 +89,5 @@ void TH2DAsymErr::SetBinError(Int_t binx, Int_t biny,
   fStatErrorHigh.fArray[bin] = statErrorHigh;
   fSysErrorLow.fArray[bin] = sysErrorLow;
   fSysErrorHigh.fArray[bin] = sysErrorHigh;
+  return;
 }
