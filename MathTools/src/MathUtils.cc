@@ -1,9 +1,12 @@
-// $Id: MathUtils.cc,v 1.8 2009/06/24 14:51:05 loizides Exp $
+// $Id: MathUtils.cc,v 1.9 2009/07/20 04:55:44 loizides Exp $
 
 #include "MitCommon/MathTools/interface/MathUtils.h"
 #include <TError.h>
 #include <TH1D.h>
 #include <TGraphAsymmErrors.h>
+#include "PhysicsTools/RooStatsCms/interface/ClopperPearsonBinomialInterval.h"
+#include "PhysicsTools/RooStatsCms/interface/FeldmanCousinsBinomialInterval.h"
+
 
 ClassImp(mithep::MathUtils)
 
@@ -18,7 +21,7 @@ Double_t MathUtils::AddInQuadrature(Double_t a, Double_t b)
 }
 
 //--------------------------------------------------------------------------------------------------
-void MathUtils::CalcRatio(Double_t n1, Double_t n2, Double_t &r, Double_t &rlow, Double_t &rup)
+void MathUtils::CalcRatio(Double_t n1, Double_t n2, Double_t &r, Double_t &rlow, Double_t &rup, Int_t type = 0)
 {
   // Calculate ratio and lower/upper errors from given values using Bayes.
   
@@ -30,18 +33,49 @@ void MathUtils::CalcRatio(Double_t n1, Double_t n2, Double_t &r, Double_t &rlow,
     return;
   }
 
-  TH1D h1("dummy1","",1,1,2);
-  h1.SetBinContent(1,n1);
-
-  TH1D h2("dummy2","",1,1,2);
-  h2.SetBinContent(1,n2);
-
-  TGraphAsymmErrors g;
-  g.BayesDivide(&h1,&h2);
-  r = g.GetY()[0];
-  rup = g.GetErrorYhigh(0);
-  rlow = g.GetErrorYlow(0);
+ 
+  if (n2 >= 1) {
+    if (type == 1) {
+      r = double(n1) / double(n2);
+      
+      //compute errors using Feldman-Cousins
+      FeldmanCousinsBinomialInterval fc;
+      const double alpha = (1-0.682);
+      fc.init(alpha);
+      fc.calculate(n1, n2);
+      rlow = r - fc.lower();
+      rup = fc.upper() - r;    
+      
+    } else if (type == 2) {
+      r = double(n1) / double(n2);
+      
+      ClopperPearsonBinomialInterval cp;
+      const double alpha = (1-0.682);
+      cp.init(alpha);
+      cp.calculate(n1, n2);
+      rlow = r - cp.lower();
+      rup = cp.upper() - r;
+      
+    } else {
+      TH1D h1("dummy1","",1,1,2);
+      h1.SetBinContent(1,n1);
+      
+      TH1D h2("dummy2","",1,1,2);
+      h2.SetBinContent(1,n2);
+      
+      TGraphAsymmErrors g;
+      g.BayesDivide(&h1,&h2);
+      r = g.GetY()[0];
+      rup = g.GetErrorYhigh(0);
+      rlow = g.GetErrorYlow(0);
+    } 
+  } else {
+    r = 0;
+    rlow = 0;
+    rup  = 0;
+  }
 }	
+
 
 //--------------------------------------------------------------------------------------------------
 Double_t MathUtils::DeltaPhi(Double_t phi1, Double_t phi2)

@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: MathUtils.h,v 1.10 2009/07/20 03:12:22 loizides Exp $
+// $Id: MathUtils.h,v 1.11 2009/08/13 09:50:40 loizides Exp $
 //
 // MathUtils
 //
@@ -20,7 +20,7 @@ namespace mithep
     public:
       static Double_t AddInQuadrature(Double_t a, Double_t b);  
       static void     CalcRatio(Double_t n1, Double_t n2, 
-                                Double_t &r, Double_t &rlow, Double_t &rup);
+                                Double_t &r, Double_t &rlow, Double_t &rup, Int_t type);
       static Double_t DeltaPhi(Double_t phi1, Double_t phi2);
       template<class V1, class V2> 
       static Double_t DeltaPhi(const V1 &v1, const V2 &v2);
