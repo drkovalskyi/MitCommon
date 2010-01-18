@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Types.h,v 1.4 2008/11/05 10:46:48 bendavid Exp $
+// $Id: Types.h,v 1.5 2009/03/03 17:06:36 loizides Exp $
 //
 // Types
 //
@@ -12,6 +12,7 @@
 #ifndef MITCOMMON_DATAFORMATS_TYPES_H
 #define MITCOMMON_DATAFORMATS_TYPES_H
  
+#include <vector>
 #include <Rtypes.h>
 #include <Math/GenVector/LorentzVector.h>
 #include <Math/SMatrix.h>
@@ -53,5 +54,8 @@ namespace mithep
   typedef ROOT::Math::SMatrix<Double32_t,7,7,ROOT::Math::MatRepSym<Double32_t,7> > SevenSymMatrix32;
   typedef ROOT::Math::SMatrix<Double32_t,3,3,ROOT::Math::MatRepStd<Double32_t,3,3> >  ThreeMatrix32;
   typedef ROOT::Math::SMatrix<Double32_t,7,7,ROOT::Math::MatRepStd<Double32_t,7,7> >  SevenMatrix32;
+  
+  typedef std::pair<UInt_t,UInt_t>  UIntPair;
+  typedef std::vector<UIntPair> UIntBounds;
 }
 #endif

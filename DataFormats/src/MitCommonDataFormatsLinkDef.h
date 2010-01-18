@@ -1,4 +1,4 @@
-// $Id: MitCommonDataFormatsLinkDef.h,v 1.4 2009/08/10 16:04:51 phedex Exp $
+// $Id: MitCommonDataFormatsLinkDef.h,v 1.5 2009/08/11 09:02:24 loizides Exp $
 
 #ifndef MITCOMMON_DATAFORMATS_LINKDEF_H
 #define MITCOMMON_DATAFORMATS_LINKDEF_H
@@ -37,6 +37,8 @@
 #pragma link C++ typedef mithep::SevenSymMatrix32;
 #pragma link C++ typedef mithep::ThreeMatrix32;
 #pragma link C++ typedef mithep::SevenMatrix32;
+#pragma link C++ typedef mithep::UIntPair;
+#pragma link C++ typedef mithep::UIntBounds;
 
 #pragma link C++ class mithep::Hist1DRat+;
 #pragma link C++ class mithep::TH2DAsymErr+;
