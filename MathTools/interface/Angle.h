@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Angle.h,v 1.2 2009/03/20 13:33:19 loizides Exp $
+// $Id: Angle.h,v 1.3 2009/07/20 03:12:22 loizides Exp $
 //
 // Angle classes, with automatic range checking.  SignedAngle ranges from -PI to PI, UnsignedAngle
 // from 0 to 2PI.  The two types of angle convert implicitly into double.
@@ -44,6 +44,7 @@
 #include <Riostream.h>
 #include <Rtypes.h>
 #include <math.h>
+#include <limits>
 
 namespace mithep
 {
@@ -80,11 +81,11 @@ namespace mithep
       SignedAngle          operator / (int other) const;
 
       // I/O
-      friend std::ostream& operator << (std::ostream& out, const SignedAngle& me)
-        { out << me.fValue;  return out; }
+      //friend std::ostream& operator << (std::ostream& out, const SignedAngle& me)
+      //  { out << me.fValue;  return out; }
 
-      friend std::istream& operator >> (std::istream& in, SignedAngle& me)
-        { in >> me.fValue; me.FixRangeSlow(); return in; }
+      //friend std::istream& operator >> (std::istream& in, SignedAngle& me)
+      //  { in >> me.fValue; me.FixRangeSlow(); return in; }
 
     private:
       // Enforce the correct range for the angle's value. The first version is faster, but assumes 
@@ -132,10 +133,10 @@ namespace mithep
       UnsignedAngle        operator / (int other) const;
 
       // I/O
-      friend std::ostream& operator << (std::ostream& out, const UnsignedAngle& me)
-        { out << me.fValue; return out; }
-      friend std::istream& operator >> (std::istream& in, UnsignedAngle& me)
-        { in >> me.fValue; me.FixRangeSlow(); return in; }
+//       friend std::ostream& operator << (std::ostream& out, const UnsignedAngle& me)
+//         { out << me.fValue; return out; }
+//       friend std::istream& operator >> (std::istream& in, UnsignedAngle& me)
+//         { in >> me.fValue; me.FixRangeSlow(); return in; }
 
     private:
       // Enforce the correct range for the angle's value. The first version is faster, 
