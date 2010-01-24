@@ -1,4 +1,4 @@
-c $Id: ctvmft.F,v 1.1 2008/09/17 04:01:49 loizides Exp $
+c $Id: ctvmft.F,v 1.2 2008/09/30 16:54:49 paus Exp $
 #include "MitCommon/Ctvmft/interface/dimensions.hh"
 
 C DEC/CMS REPLACEMENT HISTORY, Element CTVMFT.CDF
@@ -1279,14 +1279,14 @@ C conversion vertex cannot be a target
             GO TO 900
           END IF
 C  Single-track pointing if and only if to single-track vertex
-          IF (VtxPnt(Kv,2).EQ.3.XOR.NtrVtx(Nv).EQ.1) THEN
+          IF (VtxPnt(Kv,2).EQ.3.NEQV.NtrVtx(Nv).EQ.1) THEN
             IJKERR(2) = 16
             WRITE (STRING,'(I2,A,I2,A)')
      &        Kv,' ==> ',Nv,' is an illegal 1-track vertex pointing'
             GO TO 900
           END IF
 C  zero-track pointing if and only if to zero-track vertex
-          IF (VtxPnt(Kv,2).EQ.4.XOR.NtrVtx(Nv).EQ.0) THEN
+          IF (VtxPnt(Kv,2).EQ.4.NEQV.NtrVtx(Nv).EQ.0) THEN
             IJKERR(2) = 17
             WRITE (STRING,'(I2,A,I2,A)')
      &        Kv,' ==> ',Nv,' is an illegal 0-track vertex pointing'
