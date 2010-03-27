@@ -1,10 +1,11 @@
-// $Id: MitCommonDataFormatsLinkDef.h,v 1.5 2009/08/11 09:02:24 loizides Exp $
+// $Id: MitCommonDataFormatsLinkDef.h,v 1.6 2010/01/18 14:32:01 bendavid Exp $
 
 #ifndef MITCOMMON_DATAFORMATS_LINKDEF_H
 #define MITCOMMON_DATAFORMATS_LINKDEF_H
 
 #include "MitCommon/DataFormats/interface/Hist1DRat.h"
 #include "MitCommon/DataFormats/interface/TH2DAsymErr.h"
+#include "MitCommon/DataFormats/interface/TH3DAsymErr.h"
 #include "MitCommon/DataFormats/interface/Types.h"
 #include "MitCommon/DataFormats/interface/Vect3.h"
 #include "MitCommon/DataFormats/interface/Vect3C.h"
@@ -43,6 +44,7 @@
 #pragma link C++ class mithep::Hist1DRat+;
 #pragma link C++ class mithep::TH2DAsymErr+;
 #pragma link C++ enum mithep::TH2DAsymErr::EErrType;
+#pragma link C++ class mithep::TH3DAsymErr+;
 #pragma link C++ class mithep::Vect3+;
 #pragma link C++ class mithep::Vect3C+;
 #pragma link C++ class mithep::Vect4M+;
