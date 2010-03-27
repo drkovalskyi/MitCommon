@@ -1,4 +1,4 @@
-// $Id: TH2DAsymErr.cc,v 1.2 2009/08/11 09:02:24 loizides Exp $
+// $Id: TH2DAsymErr.cc,v 1.3 2009/10/21 15:05:22 sixie Exp $
 
 #include "MitCommon/DataFormats/interface/TH2DAsymErr.h"
 #include <TList.h>
@@ -58,6 +58,32 @@ Double_t TH2DAsymErr::GetError(Double_t x, Double_t y, EErrType t)
   }
   return 0;
 }
+
+//--------------------------------------------------------------------------------------------------
+Double_t TH2DAsymErr::GetBinError(Int_t b, Int_t c, EErrType t)
+{
+  // Get error corresponding to bin (b,c) for given error type.
+
+  Int_t nx = fXaxis.GetNbins()+2;
+  Int_t bin = b + nx*c;
+
+  switch (t) {
+    case kStatErrLow:
+      return fStatErrorLow.fArray[bin];
+      break;
+    case kStatErrHigh:
+      return fStatErrorHigh.fArray[bin];
+      break;
+    case kSysErrLow:
+      return fSysErrorLow.fArray[bin];
+      break;
+    case kSysErrHigh:
+      return fSysErrorHigh.fArray[bin];
+      break;
+  }
+  return 0;
+}
+
 
 //--------------------------------------------------------------------------------------------------
 void TH2DAsymErr::SetBinContent(Int_t binx, Int_t biny, Double_t value,
