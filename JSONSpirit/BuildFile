@@ -1,0 +1,8 @@
+# -*- Makefile -*-
+# $Id: BuildFile,v 1.1 2009/02/24 11:56:42 loizides Exp $
+
+<use name=boost>
+#<flags CXXFLAGS="-g">
+<export>
+  <lib name=MitCommonJSONSpirit>
+</export>
