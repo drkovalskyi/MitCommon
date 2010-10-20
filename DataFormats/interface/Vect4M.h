@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Vect4M.h,v 1.5 2009/03/25 05:16:12 loizides Exp $
+// $Id: Vect4M.h,v 1.6 2009/03/25 10:01:41 loizides Exp $
 //
 // Vect4M
 //
@@ -37,11 +37,11 @@ namespace mithep
 
     protected:
       Double32_t          fPt;  //[0,0,14]pt-component
-      Double32_t          fEta; //[0,0,12]eta-component
-      Double32_t          fPhi; //[0,0,12]phi-component
+      Double32_t          fEta; //[0,0,14]eta-component
+      Double32_t          fPhi; //[0,0,14]phi-component
       Double32_t          fM;   //[0,0,14]mass-component
 
-    ClassDef(Vect4M, 1) // Implementation of our own FourVectorM32
+    ClassDef(Vect4M, 2) // Implementation of our own FourVectorM32
   };
 }
 

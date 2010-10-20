@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Vect3C.h,v 1.4 2009/03/20 18:52:08 bendavid Exp $
+// $Id: Vect3C.h,v 1.5 2009/07/20 03:12:22 loizides Exp $
 //
 // Vect3C
 //
@@ -35,11 +35,11 @@ namespace mithep
       void                SetXYZ(Double_t x, Double_t y, Double_t z);
 
     protected:
-      Double32_t          fRho; //[0,0,12]rho-component
-      Double32_t          fEta; //[0,0,10]eta-component
-      Double32_t          fPhi; //[0,0,10]phi-component
+      Double32_t          fRho; //[0,0,14]rho-component
+      Double32_t          fEta; //[0,0,14]eta-component
+      Double32_t          fPhi; //[0,0,14]phi-component
 
-    ClassDef(Vect3C, 1) // Implementation of our own ThreeVectorC32
+    ClassDef(Vect3C, 2) // Implementation of our own ThreeVectorC32
   };
 }
 
