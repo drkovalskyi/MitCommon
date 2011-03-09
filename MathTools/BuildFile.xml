@@ -1,0 +1,5 @@
+<use   name="MitCommon/DataFormats"/>
+<use   name="PhysicsTools/RooStatsCms"/>
+<export>
+  <lib   name="1"/>
+</export>

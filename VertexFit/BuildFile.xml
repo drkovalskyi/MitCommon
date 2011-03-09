@@ -1,0 +1,6 @@
+<use   name="clhep"/>
+<use   name="MitCommon/DataFormats"/>
+<use   name="MitCommon/Ctvmft"/>
+<export>
+  <lib   name="1"/>
+</export>

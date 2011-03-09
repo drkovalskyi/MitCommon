@@ -1,0 +1,5 @@
+<use   name="f77compiler"/>
+<flags   FFLAGS="-w -fd-lines-as-comments"/>
+<export>
+  <lib   name="1"/>
+</export>

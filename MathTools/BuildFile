@@ -1,9 +1,0 @@
-# -*- Makefile -*-
-# $Id: BuildFile,v 1.3 2008/09/27 05:44:51 loizides Exp $
-
-<use name=MitCommon/DataFormats>
-<use name=PhysicsTools/RooStatsCms>
-#<flags CXXFLAGS="-g">
-<export>
-  <lib name=MitCommonMathTools>
-</export>

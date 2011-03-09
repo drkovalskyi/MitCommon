@@ -1,8 +1,0 @@
-# -*- Makefile -*-
-# $Id: BuildFile,v 1.1 2008/09/17 04:01:47 loizides Exp $
-
-<use name=f77compiler>
-<flags FFLAGS="-w -fd-lines-as-comments">
-<export>
-   <lib name=MitCommonCtvmft>
-</export>
