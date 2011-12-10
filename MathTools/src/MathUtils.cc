@@ -1,4 +1,4 @@
-// $Id: MathUtils.cc,v 1.10 2009/11/03 10:28:08 sixie Exp $
+// $Id: MathUtils.cc,v 1.11 2009/11/04 12:44:33 loizides Exp $
 
 #include "MitCommon/MathTools/interface/MathUtils.h"
 #include <TError.h>
@@ -84,10 +84,16 @@ Double_t MathUtils::DeltaPhi(Double_t phi1, Double_t phi2)
 {
   // Compute DeltaPhi between two given angles. Results is in [-pi/2,pi/2].
 
-  Double_t dphi = TMath::Abs(phi1-phi2);
-  while (dphi>TMath::Pi())
-    dphi = TMath::Abs(dphi - TMath::TwoPi());
+  Double_t dphi = phi1-phi2;
+  while (dphi > TMath::Pi())
+    dphi -= TMath::TwoPi();
+  while (dphi <= -TMath::Pi())
+    dphi += TMath::TwoPi();
+  
+  
   return(dphi);
+  
+  
 }
 
 //--------------------------------------------------------------------------------------------------
