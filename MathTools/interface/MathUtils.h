@@ -1,13 +1,10 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: MathUtils.h,v 1.11 2009/08/13 09:50:40 loizides Exp $
-//
 // MathUtils
 //
 // Math utility functions.
 //
 // Authors: S.Xie, C.Loizides
 //--------------------------------------------------------------------------------------------------
-
 #ifndef MITCOMMON_MATHTOOLS_MATHUTILS_H
 #define MITCOMMON_MATHTOOLS_MATHUTILS_H
 

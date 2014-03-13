@@ -1,12 +1,9 @@
-// $Id: MathUtils.cc,v 1.11 2009/11/04 12:44:33 loizides Exp $
-
 #include "MitCommon/MathTools/interface/MathUtils.h"
 #include <TError.h>
 #include <TH1D.h>
 #include <TGraphAsymmErrors.h>
 #include "PhysicsTools/RooStatsCms/interface/ClopperPearsonBinomialInterval.h"
 #include "PhysicsTools/RooStatsCms/interface/FeldmanCousinsBinomialInterval.h"
-
 
 ClassImp(mithep::MathUtils)
 
@@ -92,8 +89,6 @@ Double_t MathUtils::DeltaPhi(Double_t phi1, Double_t phi2)
   
   
   return(dphi);
-  
-  
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -113,6 +108,7 @@ Double_t MathUtils::DeltaR2(Double_t phi1, Double_t eta1, Double_t phi2, Double_
   Double_t dphi = DeltaPhi(phi1, phi2);
   Double_t deta = eta1-eta2;
   Double_t dR = dphi*dphi + deta*deta;
+
   return(dR);
 }
 
