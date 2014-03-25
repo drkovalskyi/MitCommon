@@ -18,8 +18,9 @@ namespace mithep
   {
 
     public:
-      static TString     GetEnv(const char* name);   // get environment variable with proper check
-      static TString     GetEnv(TString name);       // "
+      static TString     GetEnv(const char* name); // get environment variable with proper check
+      static TString     GetEnv(TString name);     // "
+      static TString     DomainName();             // get domain name (uses HOSTNAME)
 
     ClassDef(Utils, 0) // Utitily functions
   };
@@ -39,5 +40,15 @@ inline TString Utils::GetEnv(const char* name)
     return TString("");
   } 
   return TString(gSystem->Getenv(name));  
+}
+inline TString Utils::DomainName()
+{
+  if (! gSystem->Getenv("HOSTNAME")) {
+    printf(" Environment variable: HOSTNAME not defined. EXIT!\n");
+    return TString("");
+  } 
+  TString domainName = gSystem->Getenv("HOSTNAME");
+  domainName.Replace(0,domainName.First('.')+1,0,0);
+  return domainName;
 }
 #endif
