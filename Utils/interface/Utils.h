@@ -18,9 +18,11 @@ namespace mithep
   {
 
     public:
-      static TString     GetEnv(const char* name); // get environment variable with proper check
-      static TString     GetEnv(TString name);     // "
-      static TString     DomainName();             // get domain name (uses HOSTNAME)
+      static TString     GetEnv(const char* name);    // get environment variable with proper check
+      static TString     GetEnv(TString name);        // "
+      static TString     DomainName();                // get domain name (uses HOSTNAME)
+      static TString     GetCatalogDir(const char* name); // get the catalog directory
+      static TString     GetJsonFile(const char* name);   // get the json file
 
     ClassDef(Utils, 0) // Utitily functions
   };
@@ -50,5 +52,58 @@ inline TString Utils::DomainName()
   TString domainName = gSystem->Getenv("HOSTNAME");
   domainName.Replace(0,domainName.First('.')+1,0,0);
   return domainName;
+}
+
+//--------------------------------------------------------------------------------------------------
+inline TString Utils::GetCatalogDir(const char* dir)
+{
+  TString cataDir = TString("./catalog");
+  Long_t *id=0,*size=0,*flags=0,*mt=0;
+
+  printf(" Try local catalog first: %s\n",cataDir.Data());
+  if (gSystem->GetPathInfo(cataDir.Data(),id,size,flags,mt) != 0) {
+    cataDir = TString(dir);
+    if (gSystem->GetPathInfo(cataDir.Data(),id,size,flags,mt) != 0) {
+      printf(" Requested local (./catalog) and specified catalog do not exist. EXIT!\n");
+      return TString("");
+    }
+  }
+  else {
+    printf(" Local catalog exists: %s using this one.\n",cataDir.Data()); 
+  }
+
+  return cataDir;
+}
+
+//--------------------------------------------------------------------------------------------------
+inline TString Utils::GetJsonFile(const char* dir)
+{
+  TString jsonDir  = TString("./json");
+  TString json     = Utils::GetEnv("MIT_PROD_JSON");
+  Long_t *id=0,*size=0,*flags=0,*mt=0;
+
+  printf(" Try local json first: %s\n",jsonDir.Data());
+  if (gSystem->GetPathInfo(jsonDir.Data(),id,size,flags,mt) != 0) {
+    jsonDir = TString(dir);
+    if (gSystem->GetPathInfo(jsonDir.Data(),id,size,flags,mt) != 0) {
+      printf(" Requested local (./json) and specified json directory do not exist. EXIT!\n");
+      return TString("");
+    }
+  }
+  else {
+    printf(" Local json directory exists: %s using this one.\n",jsonDir.Data()); 
+  }
+
+  // Construct the full file name
+  TString jsonFile = jsonDir + TString("/") + json;
+  if (gSystem->GetPathInfo(jsonFile.Data(),id,size,flags,mt) != 0) {
+    printf(" Requested jsonfile (%s) does not exist. EXIT!\n",jsonFile.Data());
+    return TString("");
+  }
+  else {
+    printf(" Requested jsonfile (%s) exist. Moving on now!\n",jsonFile.Data());
+  }
+
+  return jsonFile;
 }
 #endif
