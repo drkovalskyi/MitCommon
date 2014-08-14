@@ -19,6 +19,8 @@ class TF1;
 namespace mithep
 {
   class Funcs {
+    virtual ~Funcs() {}
+
     public:
       static Double_t  BreitGaus(Double_t x, Double_t m, Double_t mwidth, Double_t msig, 
                                  Double_t fintf, Double_t xmin, Double_t xmax);

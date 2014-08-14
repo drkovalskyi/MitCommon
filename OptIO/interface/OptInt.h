@@ -33,7 +33,6 @@
 //
 // Authors: C.Loizides
 //--------------------------------------------------------------------------------------------------
-
 #ifndef MITCOMMON_OPTIO_OPTINT_H
 #define MITCOMMON_OPTIO_OPTINT_H
 
@@ -45,6 +44,7 @@ namespace mithep
   {
     public:
       OptInt() {}
+      virtual ~OptInt() {}
 
       static Int_t  Compress(Int_t srcsize, char *src, Int_t tgtsize, char *tgt, 
                              Int_t cl, Int_t method=-1);

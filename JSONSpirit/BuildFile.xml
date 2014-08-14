@@ -1,4 +1,5 @@
 <use   name="boost"/>
+<use   name="boost_system"/>
 <export>
   <lib   name="1"/>
 </export>

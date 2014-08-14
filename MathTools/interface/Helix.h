@@ -9,7 +9,6 @@
 // Author: C.Paus (stolen and adjusted from CDF implementation of Kurt Rinnert,
 //                 therefore not all our coding conventions fulfilled) 
 //--------------------------------------------------------------------------------------------------
-
 #ifndef MITCOMMON_MATHTOOLS_HELIX_H
 #define MITCOMMON_MATHTOOLS_HELIX_H
 

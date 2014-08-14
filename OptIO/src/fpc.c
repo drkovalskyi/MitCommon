@@ -1,4 +1,6 @@
-// $Id:$
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 const long long mask[8] =
 {0x0000000000000000LL,
@@ -14,8 +16,8 @@ void Compress(long predsizem1,
               unsigned long long *inbuf, unsigned int inlen,
               unsigned char *outbuf, unsigned int *outlen)
 {
-  register long i, out, intot, hash, dhash, code, bcode, ioc;
-  register long long val, lastval, stride, pred1, pred2, xor1, xor2;
+  register long       i, out, intot, hash, dhash, code, bcode, ioc;
+  register long long  val, lastval, stride, pred1, pred2, xor1, xor2;
   register long long *fcm, *dfcm;
 
   predsizem1 = (1L << predsizem1) - 1;
@@ -25,8 +27,8 @@ void Compress(long predsizem1,
   lastval = 0;
   pred1 = 0;
   pred2 = 0;
-  fcm = (long long *)calloc(predsizem1 + 1, 8);
-  dfcm = (long long *)calloc(predsizem1 + 1, 8);
+  fcm = (long long *) calloc(predsizem1 + 1, 8);
+  dfcm = (long long *) calloc(predsizem1 + 1, 8);
   if (!fcm || !dfcm) {
     return;
   }
@@ -147,8 +149,8 @@ void Decompress(long predsizem1,
   lastval = 0;
   pred1 = 0;
   pred2 = 0;
-  fcm = (long long *)calloc(predsizem1 + 1, 8);
-  dfcm = (long long *)calloc(predsizem1 + 1, 8);
+  fcm = (long long *) calloc(predsizem1 + 1, 8);
+  dfcm = (long long *) calloc(predsizem1 + 1, 8);
   if (!fcm || !dfcm) {
     return;
   }
@@ -230,10 +232,10 @@ void FLTCompressBS(long predsizem1,
 {
   // test double
   int memsize1 = inlen / sizeof(double) + inlen % sizeof(double);
-  char *memblock1 = (char*)calloc(memsize1*sizeof(double),1);
+  char *memblock1 = (char*) calloc(memsize1*sizeof(double),1);
   memcpy(memblock1, inbuf, inlen);
   unsigned int outlen1 = *outlen*2+1024;
-  char *outbuf1 = (char*)calloc(outlen1,1);
+  char *outbuf1 = (char*) calloc(outlen1,1);
   Compress(predsizem1, (unsigned long long*)memblock1, memsize1, outbuf1, &outlen1);
 
   if (0) 
@@ -264,7 +266,7 @@ void FLTCompressBS(long predsizem1,
     iptr+=4;
   }
   unsigned int outlen2 = *outlen*2+1024;
-  char *outbuf2 = (char*)calloc(outlen2,1);
+  char *outbuf2 = (char*) calloc(outlen2,1);
   Compress(predsizem1, (unsigned long long*)memblock2, memsize2, outbuf2, &outlen2);
 
   printf("DecompressionF %d from %i to %i, yields %.2f%%\n", 

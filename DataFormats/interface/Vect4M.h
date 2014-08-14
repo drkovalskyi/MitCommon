@@ -27,6 +27,8 @@ namespace mithep
       Vect4M(const FourVectorM &mom) : 
         fPt(mom.Pt()), fEta(mom.Eta()), fPhi(mom.Phi()), fM(mom.M()) {}
 
+      virtual ~Vect4M() {}
+
       Double_t            Eta()        const { return fEta; }
       Double_t            Phi()        const { return fPhi; }
       Double_t            Pt()         const { return fPt; }

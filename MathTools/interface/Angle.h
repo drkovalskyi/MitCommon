@@ -58,6 +58,7 @@ namespace mithep
     public:
       // Constructor
       SignedAngle(double angle = 0.0);
+      virtual ~SignedAngle() {}
 
       // No destructor; use standard copy constructor and assignment operator
 
@@ -110,6 +111,7 @@ namespace mithep
     public:
       // Constructor
       UnsignedAngle(double angle = 0.0);
+      virtual ~UnsignedAngle() {}
 
       // No destructor; use standard copy constructor and assignment operator
 

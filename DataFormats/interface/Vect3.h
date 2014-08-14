@@ -27,6 +27,8 @@ namespace mithep
       Vect3(const ThreeVectorC pos) :
         fX(pos.X()), fY(pos.Y()), fZ(pos.Z()) {}
 
+      virtual ~Vect3() {}
+
       Double_t            X()          const { return fX; }
       Double_t            Y()          const { return fY; }
       Double_t            Z()          const { return fZ; }

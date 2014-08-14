@@ -27,6 +27,8 @@ namespace mithep
       Vect3C(const ThreeVectorC pos) :
         fRho(pos.Rho()), fEta(pos.Eta()), fPhi(pos.Phi()) {}
 
+      virtual ~Vect3C() {}
+
       Double_t            Eta()        const { return fEta; }
       Double_t            Phi()        const { return fPhi; }
       Double_t            Rho()        const { return fRho; }

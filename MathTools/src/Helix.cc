@@ -1,5 +1,3 @@
-// $Id: Helix.cc,v 1.2 2009/03/20 13:33:19 loizides Exp $
-
 #include "MitCommon/MathTools/interface/Helix.h"
 #include <TSystem.h>
 
@@ -11,20 +9,16 @@ using namespace mithep;
 Helix::Helix(const TVector3 &MomentumGev, const TVector3 &PositionCm,
 	     double q, double BFieldTesla)
 {
-  double CotTheta,W,Z0,D0;
-  Angle  Phi0;
-
   if (BFieldTesla != 0.0 && q != 0.0) {
-    double CurvatureConstant
-                    = 0.0029979;
-    double Helicity = -1.0*fabs(BFieldTesla)*fabs(q)/(BFieldTesla*q);
-    double Radius   = fabs(MomentumGev.Perp()/
-			   (CurvatureConstant*BFieldTesla*q));
+    double CurvatureConstant = 0.0029979;
+    double Helicity          = -1.0*fabs(BFieldTesla)*fabs(q)/(BFieldTesla*q);
+    double Radius            = fabs(MomentumGev.Perp()/(CurvatureConstant*BFieldTesla*q));
+    fCurvature               = 1.0/(2.0*MomentumGev.Perp()/(CurvatureConstant*BFieldTesla*q));
     
-    if (Radius==0.0)
-      W = HUGE_VAL;
-    else
+    double W = HUGE_VAL;
+    if (Radius != 0.0)
       W = Helicity/Radius;
+
     Angle  phi1     = MomentumGev.Phi();
     double x        = PositionCm.x(),
            y        = PositionCm.y(),
@@ -32,10 +26,10 @@ Helix::Helix(const TVector3 &MomentumGev, const TVector3 &PositionCm,
     double sinPhi1  = sin(phi1),
            cosPhi1  = cos(phi1);
     double gamma    = atan((x*cosPhi1 + y*sinPhi1)/(x*sinPhi1-y*cosPhi1 -1/W));
-    Phi0            = phi1+gamma;
-    D0              = ((1/W + y*cosPhi1 - x*sinPhi1) /cos(gamma) - 1/W);
-    CotTheta        = MomentumGev.z()/MomentumGev.Perp();
-    Z0              = z + gamma*CotTheta/W;
+    fPhi0            = phi1+gamma;
+    fD0              = ((1/W + y*cosPhi1 - x*sinPhi1) /cos(gamma) - 1/W);
+    fCotTheta        = MomentumGev.z()/MomentumGev.Perp();
+    fZ0              = z + gamma*fCotTheta/W;
   }
   // For the special case that we have no Helix, never happens for us .. right?
   else {
@@ -75,11 +69,10 @@ TVector3 Helix::Position(double s) const
     return TVector3(-fD0*fSinPhi0+s*fCosPhi0*fSinTheta,
 		     fD0*fCosPhi0+s*fSinPhi0*fSinTheta,
 		     fZ0+s*fCosTheta);
-  } else {
-    return TVector3((fCosPhi0*fSs-fSinPhi0*(2.0*fCurvature*fD0+1.0-fCc))
-		    /(2.0*fCurvature),
-		    (fSinPhi0*fSs+fCosPhi0*(2.0*fCurvature*fD0+1.0-fCc))
-		    /(2.0*fCurvature),   
+  }
+  else {
+    return TVector3((fCosPhi0*fSs-fSinPhi0*(2.0*fCurvature*fD0+1.0-fCc))/(2.0*fCurvature),
+		    (fSinPhi0*fSs+fCosPhi0*(2.0*fCurvature*fD0+1.0-fCc))/(2.0*fCurvature),   
 		    fS*fCosTheta + fZ0);
   }
 }
@@ -94,6 +87,7 @@ TVector3 Helix::Direction(double s) const
   double xtan = fSinTheta*(fCosPhi0*fCc -fSinPhi0*fSs); 
   double ytan = fSinTheta*(fCosPhi0*fSs +fSinPhi0*fCc); 
   double ztan = fCosTheta;
+
   return TVector3(xtan,ytan,ztan);
 }
 
@@ -170,6 +164,7 @@ TVector3 Helix::SecondDerivative(double s) const
   double sp1     = sin(phi1);
   double xsecond = -fSinTheta*sp1*2.0*fCurvature*fSinTheta;
   double ysecond = fSinTheta*sqrt(1.0-sp1*sp1)*2.0*fCurvature*fSinTheta;
+
   return TVector3(xsecond,ysecond,0.0);
 }
 
@@ -177,6 +172,7 @@ TVector3 Helix::SecondDerivative(double s) const
 double Helix::SinPhi0() const
 {
   fRefreshCache();
+
   return fSinPhi0;
 }
 
@@ -184,6 +180,7 @@ double Helix::SinPhi0() const
 double Helix::CosPhi0() const
 {
   fRefreshCache();
+
   return fCosPhi0;
 }
 
@@ -191,6 +188,7 @@ double Helix::CosPhi0() const
 double Helix::SinTheta() const
 {
   fRefreshCache();
+
   return fSinTheta;
 }
 
@@ -198,6 +196,7 @@ double Helix::SinTheta() const
 double Helix::CosTheta() const
 {
   fRefreshCache();
+
   return fCosTheta;
 }
 
@@ -213,6 +212,7 @@ Angle Helix::PhiAtR(double rho) const
     return (arcsin > 0.) ? M_PI : -M_PI;
   }
   Angle phi = Phi0() + asin(arcsin);
+
   return phi;
 }
 
@@ -223,7 +223,8 @@ double Helix::ZAtR(double rho) const
 }
 
 //--------------------------------------------------------------------------------------------------
-double Helix::L2DAtR(double rho) const {
+double Helix::L2DAtR(double rho) const
+{
   double L2D;
 
   double c = Curvature();
@@ -247,11 +248,13 @@ double Helix::L2DAtR(double rho) const {
   else {
     L2D = rho;
   }
+
   return L2D;
 }
 
 //--------------------------------------------------------------------------------------------------
-double Helix::CosAlphaAtR(double rho) const {
+double Helix::CosAlphaAtR(double rho) const
+{
   double c   = Curvature();
   double d   = D0();
   double a   = c/(1.0+2.0*c*d);
@@ -268,5 +271,6 @@ double Helix::CosAlphaAtR(double rho) const {
   double dir_y = dir_x0*sin(phi0) + dir_y0*cos(phi0);
 
   double cosalpha = (x*dir_x + y*dir_y)/rho;
+
   return cosalpha;
 }

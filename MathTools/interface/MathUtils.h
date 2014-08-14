@@ -14,6 +14,8 @@
 namespace mithep
 {
   class MathUtils {
+    virtual ~MathUtils() {}
+
     public:
       static Double_t AddInQuadrature(Double_t a, Double_t b);  
       static void     CalcRatio(Double_t n1, Double_t n2, 

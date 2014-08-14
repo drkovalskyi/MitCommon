@@ -16,6 +16,7 @@ namespace mithep
 {
   class Utils
   {
+    virtual ~Utils() {}
 
     public:
       static TString     GetEnv(const char* name);    // get environment variable with proper check
