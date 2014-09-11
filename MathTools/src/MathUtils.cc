@@ -79,15 +79,15 @@ void MathUtils::CalcRatio(Double_t n1, Double_t n2, Double_t &r, Double_t &rlow,
 //--------------------------------------------------------------------------------------------------
 Double_t MathUtils::DeltaPhi(Double_t phi1, Double_t phi2)
 {
-  // Compute DeltaPhi between two given angles. Results is in [-pi/2,pi/2].
+ // Compute DeltaPhi between two given phi angles. Results is in [-pi,pi] where phi1-phi2 is used
+  // meaning we point from phi1 to phi2, using the sign as mathematically positive == counter clock.
 
   Double_t dphi = phi1-phi2;
   while (dphi > TMath::Pi())
     dphi -= TMath::TwoPi();
   while (dphi <= -TMath::Pi())
     dphi += TMath::TwoPi();
-  
-  
+
   return(dphi);
 }
 
