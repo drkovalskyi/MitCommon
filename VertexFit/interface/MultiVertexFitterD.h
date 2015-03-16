@@ -27,12 +27,12 @@
 //-------------------------------------------------------------------------------------------------
 // Fortran routines to get address of the start of the ctvmq and ctvmfr common blocks
 //-------------------------------------------------------------------------------------------------
-extern "C" {
-   int dctvmq_address_ (void);
-   int dctvmfr_address_(void);
-   int dfiddle_address_(void);
-   int dtrkprm_address_(void);
-}
+/* extern "C" { */
+/*    int dctvmq_address_ (void); */
+/*    int dctvmfr_address_(void); */
+/*    int dfiddle_address_(void); */
+/*    int dtrkprm_address_(void); */
+/* } */
 
 namespace mithep {
   class MultiVertexFitterD {

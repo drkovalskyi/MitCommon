@@ -1,6 +1,7 @@
 // $Id: MultiVertexFitterC.cc,v 1.2 2009/03/20 13:33:03 loizides Exp $
 
 #include "MitCommon/VertexFit/interface/MultiVertexFitterC.h"
+#include "MitCommon/Ctvmft/interface/common_blocks.hh"
 #include <algorithm>
 #include <math.h>
 #include <iostream>
@@ -37,10 +38,14 @@ MultiVertexFitterC::MultiVertexFitterC() :
   _expert="Christoph Paus (paus@mit.edu)";
 
   // First get pointers to various FORTAN common blocks
-  _ctvmq_com  = (CTVMQ*)  cctvmq_address_();  //printf(" Common:  _ctvmq_com   %p\n", _ctvmq_com );
-  _ctvmfr_com = (CTVMFR*) cctvmfr_address_(); //printf(" Common:  _ctvmfr_com  %p\n", _ctvmfr_com);
-  _fiddle_com = (FIDDLE*) cfiddle_address_(); //printf(" Common:  _fiddle_com  %p\n", _fiddle_com);
-  _trkprm_com = (TRKPRM*) ctrkprm_address_(); //printf(" Common:  _trkprm_com  %p\n", _trkprm_com);
+  // _ctvmq_com  = (CTVMQ*)  cctvmq_address_();  //printf(" Common:  _ctvmq_com   %p\n", _ctvmq_com );
+  // _ctvmfr_com = (CTVMFR*) cctvmfr_address_(); //printf(" Common:  _ctvmfr_com  %p\n", _ctvmfr_com);
+  // _fiddle_com = (FIDDLE*) cfiddle_address_(); //printf(" Common:  _fiddle_com  %p\n", _fiddle_com);
+  // _trkprm_com = (TRKPRM*) ctrkprm_address_(); //printf(" Common:  _trkprm_com  %p\n", _trkprm_com);
+  _ctvmq_com = (CTVMQ*)ctvmfr_;
+  _ctvmfr_com = (CTVMFR*)ctvmfd_;
+  _fiddle_com = (FIDDLE*)dctvmfi_;
+  _trkprm_com = (TRKPRM*)dctvmtr_;
 
   // Initialize various arrays
   init();
@@ -1868,10 +1873,14 @@ void MultiVertexFitterC::resetAllocatedVertexNumber()
 void MultiVertexFitterC::restoreFromCommons()
 {
   _stat       = 0;
-  _ctvmq_com  = (CTVMQ*)  cctvmq_address_();
-  _ctvmfr_com = (CTVMFR*) cctvmfr_address_();
-  _fiddle_com = (FIDDLE*) cfiddle_address_();
-  _trkprm_com = (TRKPRM*) ctrkprm_address_();
+  // _ctvmq_com  = (CTVMQ*)  cctvmq_address_();
+  // _ctvmfr_com = (CTVMFR*) cctvmfr_address_();
+  // _fiddle_com = (FIDDLE*) cfiddle_address_();
+  // _trkprm_com = (TRKPRM*) ctrkprm_address_();
+  _ctvmq_com = (CTVMQ*)ctvmfr_;
+  _ctvmfr_com = (CTVMFR*)ctvmfd_;
+  _fiddle_com = (FIDDLE*)dctvmfi_;
+  _trkprm_com = (TRKPRM*)dctvmtr_;
   _ctvmq      = *_ctvmq_com;
   _ctvmfr     = *_ctvmfr_com;
   _fiddle     = *_fiddle_com;

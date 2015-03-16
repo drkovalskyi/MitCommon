@@ -1,4 +1,4 @@
-int address_(int *ref)
-{
-  return (int) ref;
-}
+/* int address_(int *ref) */
+/* { */
+/*   return (int) ref; */
+/* } */
