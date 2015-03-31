@@ -1,98 +1,98 @@
-c $Id:$
-#include "MitCommon/Ctvmft/interface/ddimensions.hh"
-
-c-----------------------------------------------------------------------
-      integer function dctvmfr_address()
+cc $Id:$
+c#include "MitCommon/Ctvmft/interface/ddimensions.hh"
 c
-c    Get address of CTVMFR common
+cc-----------------------------------------------------------------------
+c      integer function dctvmfr_address()
+cc
+cc    Get address of CTVMFR common
+cc
+cc-----------------------------------------------------------------------
+c      implicit none
+c#include "MitCommon/Ctvmft/interface/dctvmdi.h"
+c#include "MitCommon/Ctvmft/interface/dctvmft.h"
 c
-c-----------------------------------------------------------------------
-      implicit none
-#include "MitCommon/Ctvmft/interface/dctvmdi.h"
-#include "MitCommon/Ctvmft/interface/dctvmft.h"
-
-      integer address
-      
-      dctvmfr_address = address(vmat(1,1))
-
-      return
-      end
-
-c-----------------------------------------------------------------------
-      integer function dctvmq_address()
+c      integer address
+c      
+c      dctvmfr_address = address(vmat(1,1))
 c
-c    Get address of CTVMQ common
+c      return
+c      end
 c
-c-----------------------------------------------------------------------
-      implicit none
-#include "MitCommon/Ctvmft/interface/dctvmdi.h"
-#include "MitCommon/Ctvmft/interface/dctvmft.h"
-
-C  CTC first approximation and track-vertex step parameters for CTVMFT
-      DATA  DRMAX /  2.0 /  ! max XY separ., non-intersecting circles
-      DATA  DZMAX / 20.0 /  ! max allowed track Z separation at the vtx
-      DATA  RVMAX / 70.0 /  ! max allowed vertex radius
-      DATA TRNMAX /  0.5 /  ! max permitted track turning angle to vtx
-C      DATA  DSMIN / -2.0 /  ! min permitted arc length, track to vtx
-      DATA  DSMIN / -50.0 / ! min permitted arc length, track to vtx
-      DATA   CVTX /MAXVTX*0/
-      
-      integer address
-      
-      dctvmq_address=address(runnum)
-      
-      return
-      end
-
-c-----------------------------------------------------------------------
-      integer function dctvmtu_address()
+cc-----------------------------------------------------------------------
+c      integer function dctvmq_address()
+cc
+cc    Get address of CTVMQ common
+cc
+cc-----------------------------------------------------------------------
+c      implicit none
+c#include "MitCommon/Ctvmft/interface/dctvmdi.h"
+c#include "MitCommon/Ctvmft/interface/dctvmft.h"
 c
-c    Get address of CTVMTU common
+cC  CTC first approximation and track-vertex step parameters for CTVMFT
+c      DATA  DRMAX /  2.0 /  ! max XY separ., non-intersecting circles
+c      DATA  DZMAX / 20.0 /  ! max allowed track Z separation at the vtx
+c      DATA  RVMAX / 70.0 /  ! max allowed vertex radius
+c      DATA TRNMAX /  0.5 /  ! max permitted track turning angle to vtx
+cC      DATA  DSMIN / -2.0 /  ! min permitted arc length, track to vtx
+c      DATA  DSMIN / -50.0 / ! min permitted arc length, track to vtx
+c      DATA   CVTX /MAXVTX*0/
+c      
+c      integer address
+c      
+c      dctvmq_address=address(runnum)
+c      
+c      return
+c      end
 c
-c-----------------------------------------------------------------------
-      implicit none
-#include "MitCommon/Ctvmft/interface/dctvmtu.h"
-
-      integer address
-
-      DATA    C20MAX / -1.0  /
-      DATA    C21MAX / -1.0  /
-      DATA    LXY0MN / -1e10 /
-      DATA    LXY1MN / -1e10 /
-      
-      dctvmtu_address = address(C20MAX)
-
-      return
-      end
-
-c-----------------------------------------------------------------------
-      integer function dfiddle_address()
+cc-----------------------------------------------------------------------
+c      integer function dctvmtu_address()
+cc
+cc    Get address of CTVMTU common
+cc
+cc-----------------------------------------------------------------------
+c      implicit none
+c#include "MitCommon/Ctvmft/interface/dctvmtu.h"
 c
-c    Get address of FIDDLE common
+c      integer address
 c
-c-----------------------------------------------------------------------
-      implicit none
-#include "MitCommon/Ctvmft/interface/dctvmfi.h"      
-      integer address
-
-      dfiddle_address = address(excuse)
-
-      return
-      end
-
-c-----------------------------------------------------------------------
-      integer function dtrkprm_address()
+c      DATA    C20MAX / -1.0  /
+c      DATA    C21MAX / -1.0  /
+c      DATA    LXY0MN / -1e10 /
+c      DATA    LXY1MN / -1e10 /
+c      
+c      dctvmtu_address = address(C20MAX)
 c
-c    Get address of TRKPRM common
+c      return
+c      end
 c
-c-----------------------------------------------------------------------
-      implicit none
-#include "MitCommon/Ctvmft/interface/dctvmdi.h"
-#include "MitCommon/Ctvmft/interface/dctvmtr.h"
-
-      integer address
-      
-      dtrkprm_address = address(trhelix(1,1))
-
-      return
-      end
+cc-----------------------------------------------------------------------
+c      integer function dfiddle_address()
+cc
+cc    Get address of FIDDLE common
+cc
+cc-----------------------------------------------------------------------
+c      implicit none
+c#include "MitCommon/Ctvmft/interface/dctvmfi.h"      
+c      integer address
+c
+c      dfiddle_address = address(excuse)
+c
+c      return
+c      end
+c
+cc-----------------------------------------------------------------------
+c      integer function dtrkprm_address()
+cc
+cc    Get address of TRKPRM common
+cc
+cc-----------------------------------------------------------------------
+c      implicit none
+c#include "MitCommon/Ctvmft/interface/dctvmdi.h"
+c#include "MitCommon/Ctvmft/interface/dctvmtr.h"
+c
+c      integer address
+c      
+c      dtrkprm_address = address(trhelix(1,1))
+c
+c      return
+c      end

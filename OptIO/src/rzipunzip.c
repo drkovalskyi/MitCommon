@@ -9,6 +9,8 @@
 #include "MitCommon/OptIO/src/LzmaDec.h"
 #include "MitCommon/OptIO/src/fpc.h"
 
+#include "LzmaTypes.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -332,7 +334,8 @@ void R__myzip(int cxlevel, int *srcsize, char *src, int *tgtsize, char *tgt, int
       LzmaEnc_Destroy(enc, &g_Alloc, &g_Alloc);
       return;
     }
-    res = LzmaEnc_MemEncode(enc, tgtptr, tgtsize, src, in_size,
+    SizeT outlen = *tgtsize;
+    res = LzmaEnc_MemEncode(enc, tgtptr, &outlen, src, in_size,
                             0, NULL, &g_Alloc, &g_Alloc);
     if (res != SZ_OK) {
       printf("error %d - LzmaEnc_MemEncode", res);
@@ -636,9 +639,10 @@ void R__myunzip(int *srcsize, uch *src, int *tgtsize, uch *tgt, int *irep, int l
       return;
     }
 
+    SizeT destLen = obufcnt;
     SizeT new_len = obufcnt;
     ELzmaStatus status;
-    res = LzmaDecode(obufptr, &obufcnt, ibufptr, &new_len, hptr, hsize, 
+    res = LzmaDecode(obufptr, &destLen, ibufptr, &new_len, hptr, hsize, 
                      LZMA_FINISH_END, &status, &g_Alloc);
     if (res!=SZ_OK) {
       fprintf(stderr,"R__myunzip: error %d in LzmaDecode (lzolib)\n", res);
