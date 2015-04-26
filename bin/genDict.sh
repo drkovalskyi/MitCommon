@@ -112,7 +112,7 @@ do
       INCLUDES=$(makedepend -I$CMSSW_BASE/src -f- $LINKDEF 2>/dev/null | awk '/Mit/ {print $2}' | tr '\n' ' ')
         
       # generate dictionary if $OUTPUT.cc does not exist or is older than one of the source files
-      if $FORCE || $(check-update $OUTPUT.cc $INCLUDES $LINKDEF)
+      if $FORCE || $(check-update $OUTPUT.cc $INCLUDES $LINKDEF) || ! [ -e $LIBDIR/${OUTPUT}_rdict.pcm ]
       then
         HEADERS=$(sed -n 's|#include *"\([^"]*\)"|'$CMSSW_BASE'/src/\1|p' $LINKDEF | tr '\n' ' ')
           
@@ -138,7 +138,8 @@ do
     else
       INCLUDES=$(makedepend -I$CMSSW_BASE/src -f- $DICTDIR/classes.h 2>/dev/null | awk '/Mit/ {print $2}' | tr '\n' ' ')      
 
-      if $FORCE || $(check-update $OUTPUT.cc $DICTDIR/classes_def.xml $DICTDIR/classes.h $INCLUDES)
+      if $FORCE || $(check-update $OUTPUT.cc $DICTDIR/classes_def.xml $DICTDIR/classes.h $INCLUDES) ||
+              ! [ -e $LIBDIR/$OUTPUT.rootmap ] || ! [ -e $LIBDIR/${OUTPUT}_rdict.pcm ]
       then
         echo genreflex $DICTDIR/classes.h -s $DICTDIR/classes_def.xml -o $OUTPUT.cc --rootmap=$OUTPUT.rootmap -I$CMSSW_BASE/src
         genreflex $DICTDIR/classes.h -s $DICTDIR/classes_def.xml -o $OUTPUT.cc --rootmap=$OUTPUT.rootmap -I$CMSSW_BASE/src
