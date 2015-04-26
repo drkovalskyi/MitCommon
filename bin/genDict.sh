@@ -15,6 +15,12 @@ check-update () {
       
     for SOURCE in $SOURCES
     do
+      if ! [ -e $SOURCE ]
+      then
+        echo "$SOURCE does not exist"
+        exit 1
+      fi
+      
       if [ $LASTUPDATE -lt $(stat -c %Z $SOURCE) ]
       then
         UPDATED=true
@@ -26,6 +32,43 @@ check-update () {
   echo $UPDATED
 }
 
+usage () {
+  echo "Usage: genDict.sh [-c] [-f] PACKAGES"
+  echo "Generate ROOT dictionary source code. PACKAGE is e.g. MitAna/DataTree."
+  echo ""
+  echo "  -c  Clear generated source code."
+  echo "  -f  Force generation. Otherwise dictionaries are written only if"
+  echo "      header files are updated."
+
+  exit $1
+}
+
+
+FORCE=false
+CLEAR=false
+while getopts fch OPT; do
+  case $OPT in
+    c)
+      CLEAR=false
+      ;;
+        
+    f)
+      FORCE=true
+      ;;
+    h)
+      usage 0
+      ;;
+    \?)
+      echo " Invalid option: -$OPTARG" >& 2
+      usage 1
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))
+if [ $# -lt 1 ]; then
+  usage 1
+fi
 
 if ! [ $CMSSW_BASE ] || ! [ $SCRAM_ARCH ]
 then
@@ -44,35 +87,41 @@ do
   SRCDIR=$CMSSW_BASE/src/$PACKAGE/src
   INCDIR=$CMSSW_BASE/src/$PACKAGE/interface
 
+  if ! [ -d $DICTDIR ] || ! [ -d $SRCDIR ] || ! [ -d $INCDIR ]
+  then
+    echo "$PACKAGE does not appear to be a valid package."
+    continue
+  fi
+
   LIBDIR=$CMSSW_BASE/lib/$SCRAM_ARCH
   [ -d $LIBDIR ] || mkdir $LIBDIR
+
+  MAKEFILE=$DICTDIR/Makefile
 
   cd $SRCDIR
 
   for LINKDEF in $(ls $DICTDIR/*LinkDef.h); do
-    # collect include headers from LinkDef file
-    HEADERS=$(sed -n 's|#include *"\([^"]*\)"|'$CMSSW_BASE'/src/\1|p' $LINKDEF | tr '\n' ' ')
-    for HEADER in $HEADERS
-    do
-      if ! [ -e $HEADER ]
-      then
-        echo "$HEADER does not exist"
-        exit 1
-      fi
-    done
-      
     # the name of the dictionary code file generated from ABCLinkDef.h will be ABC_LinkDefDict.cc
     OUTPUT=$(sed 's/LinkDef.h/_LinkDefDict/' <<< $(basename $LINKDEF))
 
-    # generate dictionary if $OUTPUT.cc does not exist or is older than one of the source files
-
-    if $(check-update $OUTPUT.cc $HEADERS $LINKDEF)
+    if $CLEAR
     then
-      echo rootcling -f $OUTPUT.cc -I$CMSSW_BASE/src $HEADERS $LINKDEF
-      rootcling -f $OUTPUT.cc -I$CMSSW_BASE/src $HEADERS $LINKDEF
-
-      echo mv ${OUTPUT}_rdict.pcm $LIBDIR/
-      mv ${OUTPUT}_rdict.pcm $LIBDIR/
+      rm -f $OUTPUT 2>/dev/null
+      rm -f $LIBDIR/${OUTPUT}_rdict.pcm 2>/dev/null
+    else
+      INCLUDES=$(makedepend -I$CMSSW_BASE/src -f- $LINKDEF 2>/dev/null | awk '/Mit/ {print $2}' | tr '\n' ' ')
+        
+      # generate dictionary if $OUTPUT.cc does not exist or is older than one of the source files
+      if $FORCE || $(check-update $OUTPUT.cc $INCLUDES $LINKDEF)
+      then
+        HEADERS=$(sed -n 's|#include *"\([^"]*\)"|'$CMSSW_BASE'/src/\1|p' $LINKDEF | tr '\n' ' ')
+          
+        echo rootcling -f $OUTPUT.cc -I$CMSSW_BASE/src $HEADERS $LINKDEF
+        rootcling -f $OUTPUT.cc -I$CMSSW_BASE/src $HEADERS $LINKDEF
+  
+        echo mv ${OUTPUT}_rdict.pcm $LIBDIR/
+        mv ${OUTPUT}_rdict.pcm $LIBDIR/
+      fi
     fi
   done
   
@@ -81,15 +130,24 @@ do
     # the name of the dictionary code file generated from classes_xml will be PACKAGE_ReflexDict.cc
     OUTPUT=$(sed 's|\([^/]*\)/\(.*\)|\1\2|' <<< $PACKAGE)_ReflexDict
 
-    if $(check-update $OUTPUT.cc $DICTDIR/classes_def.xml $DICTDIR/classes.h)
+    if $CLEAR
     then
-      echo genreflex $DICTDIR/classes.h -s $DICTDIR/classes_def.xml -o $OUTPUT.cc --rootmap=$OUTPUT.rootmap -I$CMSSW_BASE/src
-      genreflex $DICTDIR/classes.h -s $DICTDIR/classes_def.xml -o $OUTPUT.cc --rootmap=$OUTPUT.rootmap -I$CMSSW_BASE/src
+      rm -f $OUTPUT 2>/dev/null
+      rm -f $LIBDIR/$OUTPUT.rootmap 2>/dev/null
+      rm -f $LIBDIR/${OUTPUT}_rdict.pcm 2>/dev/null
+    else
+      INCLUDES=$(makedepend -I$CMSSW_BASE/src -f- $DICTDIR/classes.h 2>/dev/null | awk '/Mit/ {print $2}' | tr '\n' ' ')      
 
-      echo mv $OUTPUT.rootmap $LIBDIR/
-      mv $OUTPUT.rootmap $LIBDIR/
-      echo mv ${OUTPUT}_rdict.pcm $LIBDIR/
-      mv ${OUTPUT}_rdict.pcm $LIBDIR/
+      if $FORCE || $(check-update $OUTPUT.cc $DICTDIR/classes_def.xml $DICTDIR/classes.h $INCLUDES)
+      then
+        echo genreflex $DICTDIR/classes.h -s $DICTDIR/classes_def.xml -o $OUTPUT.cc --rootmap=$OUTPUT.rootmap -I$CMSSW_BASE/src
+        genreflex $DICTDIR/classes.h -s $DICTDIR/classes_def.xml -o $OUTPUT.cc --rootmap=$OUTPUT.rootmap -I$CMSSW_BASE/src
+  
+        echo mv $OUTPUT.rootmap $LIBDIR/
+        mv $OUTPUT.rootmap $LIBDIR/
+        echo mv ${OUTPUT}_rdict.pcm $LIBDIR/
+        mv ${OUTPUT}_rdict.pcm $LIBDIR/
+      fi
     fi
   fi
 done
