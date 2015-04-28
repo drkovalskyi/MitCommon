@@ -49,9 +49,8 @@ CLEAR=false
 while getopts fch OPT; do
   case $OPT in
     c)
-      CLEAR=false
+      CLEAR=true
       ;;
-        
     f)
       FORCE=true
       ;;
