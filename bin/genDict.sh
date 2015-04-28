@@ -66,9 +66,6 @@ while getopts fch OPT; do
 done
 
 shift $((OPTIND-1))
-if [ $# -lt 1 ]; then
-  usage 1
-fi
 
 if ! [ $CMSSW_BASE ] || ! [ $SCRAM_ARCH ]
 then
@@ -77,6 +74,17 @@ then
 fi
 
 PACKAGES="$@"
+
+if ! [ "$PACKAGES" ]
+then
+  for DIR in $(ls $CMSSW_BASE/src)
+  do
+    for SUBDIR in $(ls $CMSSW_BASE/src/$DIR)
+    do
+      [ -d $CMSSW_BASE/src/$DIR/$SUBDIR/dict ] && PACKAGES="$PACKAGES $DIR/$SUBDIR"
+    done
+  done
+fi
 
 echo "Generating ROOT dictionaries for:"
 echo " $PACKAGES"
