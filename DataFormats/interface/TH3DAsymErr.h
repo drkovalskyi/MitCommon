@@ -1,6 +1,4 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: TH3DAsymErr.h,v 1.3 2009/10/21 15:04:06 sixie Exp $
-//
 // TH3DAsymErr
 //
 // Histogram that stores separate asymmetric statistical and systematic errors. It is 
@@ -31,6 +29,7 @@ namespace mithep
 
       using TH3D::GetBinContent;
       Double_t  GetError(Double_t x, Double_t y, Double_t z, TH2DAsymErr::EErrType t);
+      using TH3D::GetBinError;
       Double_t  GetBinError(Int_t b, Int_t c, Int_t d, TH2DAsymErr::EErrType t);
       Double_t  GetStatErrorLow(Double_t x, Double_t y, Double_t z);
       Double_t  GetBinStatErrorLow(Int_t b, Int_t c, Int_t d);
