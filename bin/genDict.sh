@@ -88,11 +88,15 @@ fi
 echo "Generating ROOT dictionaries for:"
 echo " $PACKAGES"
 
+TMPDIR=$CMSSW_BASE/tmp/$SCRAM_ARCH
+
+cd $CMSSW_BASE/src
+
 for PACKAGE in $PACKAGES
 do
-  DICTDIR=$CMSSW_BASE/src/$PACKAGE/dict
-  SRCDIR=$CMSSW_BASE/src/$PACKAGE/src
-  INCDIR=$CMSSW_BASE/src/$PACKAGE/interface
+  DICTDIR=$PACKAGE/dict
+  SRCDIR=$PACKAGE/src
+  INCDIR=$PACKAGE/interface
 
   if ! [ -d $DICTDIR ] || ! [ -d $SRCDIR ] || ! [ -d $INCDIR ]
   then
@@ -105,29 +109,29 @@ do
 
   MAKEFILE=$DICTDIR/Makefile
 
-  cd $SRCDIR
-
   for LINKDEF in $(ls $DICTDIR/*LinkDef.h); do
     # the name of the dictionary code file generated from ABCLinkDef.h will be ABC_LinkDefDict.cc
     OUTPUT=$(sed 's/LinkDef.h/_LinkDefDict/' <<< $(basename $LINKDEF))
 
     if $CLEAR
     then
-      rm -f $OUTPUT 2>/dev/null
+      rm -f $SRCDIR/$OUTPUT 2>/dev/null
       rm -f $LIBDIR/${OUTPUT}_rdict.pcm 2>/dev/null
     else
-      INCLUDES=$(makedepend -I$CMSSW_BASE/src -f- $LINKDEF 2>/dev/null | awk '/Mit/ {print $2}' | tr '\n' ' ')
+      INCLUDES=$(makedepend -I. -f- $LINKDEF 2>/dev/null | awk '/Mit/ {print $2}' | tr '\n' ' ')
         
       # generate dictionary if $OUTPUT.cc does not exist or is older than one of the source files
-      if $FORCE || $(check-update $OUTPUT.cc $INCLUDES $LINKDEF) || ! [ -e $LIBDIR/${OUTPUT}_rdict.pcm ]
+      if $FORCE || $(check-update $SRCDIR/$OUTPUT.cc $INCLUDES $LINKDEF) || ! [ -e $LIBDIR/${OUTPUT}_rdict.pcm ]
       then
-        HEADERS=$(sed -n 's|#include *"\([^"]*\)"|'$CMSSW_BASE'/src/\1|p' $LINKDEF | tr '\n' ' ')
+        HEADERS=$(sed -n 's|#include *"\([^"]*\)"|\1|p' $LINKDEF | tr '\n' ' ')
           
-        echo rootcling -f $OUTPUT.cc -I$CMSSW_BASE/src $HEADERS $LINKDEF
-        rootcling -f $OUTPUT.cc -I$CMSSW_BASE/src $HEADERS $LINKDEF
+        echo rootcling -f $TMPIR/$OUTPUT.cc -I$CMSSW_BASE/src $HEADERS $LINKDEF
+        rootcling -f $TMPDIR/$OUTPUT.cc -I$CMSSW_BASE/src $HEADERS $LINKDEF
   
-        echo mv ${OUTPUT}_rdict.pcm $LIBDIR/
-        mv ${OUTPUT}_rdict.pcm $LIBDIR/
+        echo mv $TMPDIR/${OUTPUT}.cc $SRCDIR/
+        mv $TMPDIR/${OUTPUT}.cc $SRCDIR/
+        echo mv $TMPDIR/${OUTPUT}_rdict.pcm $LIBDIR/
+        mv $TMPDIR/${OUTPUT}_rdict.pcm $LIBDIR/
       fi
     fi
   done
@@ -139,20 +143,22 @@ do
 
     if $CLEAR
     then
-      rm -f $OUTPUT 2>/dev/null
+      rm -f $SRCDIR/$OUTPUT 2>/dev/null
       rm -f $LIBDIR/$OUTPUT.rootmap 2>/dev/null
       rm -f $LIBDIR/${OUTPUT}_rdict.pcm 2>/dev/null
     else
-      INCLUDES=$(makedepend -I$CMSSW_BASE/src -f- $DICTDIR/classes.h 2>/dev/null | awk '/Mit/ {print $2}' | tr '\n' ' ')      
+      INCLUDES=$(makedepend -I. -f- $DICTDIR/classes.h 2>/dev/null | awk '/Mit/ {print $2}' | tr '\n' ' ')      
 
-      if $FORCE || $(check-update $OUTPUT.cc $DICTDIR/classes_def.xml $DICTDIR/classes.h $INCLUDES) ||
+      if $FORCE || $(check-update $SRCDIR/$OUTPUT.cc $DICTDIR/classes_def.xml $DICTDIR/classes.h $INCLUDES) ||
               ! [ -e $LIBDIR/$OUTPUT.rootmap ] || ! [ -e $LIBDIR/${OUTPUT}_rdict.pcm ]
       then
-        echo genreflex $DICTDIR/classes.h -s $DICTDIR/classes_def.xml -o $OUTPUT.cc --rootmap=$OUTPUT.rootmap -I$CMSSW_BASE/src
-        genreflex $DICTDIR/classes.h -s $DICTDIR/classes_def.xml -o $OUTPUT.cc --rootmap=$OUTPUT.rootmap -I$CMSSW_BASE/src
+        echo genreflex $DICTDIR/classes.h -s $DICTDIR/classes_def.xml -o $TMPDIR/$OUTPUT.cc --rootmap=$TMPDIR/$OUTPUT.rootmap -I$CMSSW_BASE/src
+        genreflex $DICTDIR/classes.h -s $DICTDIR/classes_def.xml -o $TMPDIR/$OUTPUT.cc --rootmap=$TMPDIR/$OUTPUT.rootmap -I$CMSSW_BASE/src
   
-        echo mv $OUTPUT.rootmap $LIBDIR/
-        mv $OUTPUT.rootmap $LIBDIR/
+        echo mv $SRCDIR/$OUTPUT.cc $SRCDIR/
+        mv $SRCDIR/$OUTPUT.cc $SRCDIR/
+        echo mv $TMPDIR/$OUTPUT.rootmap $LIBDIR/
+        mv $TMPDIR/$OUTPUT.rootmap $LIBDIR/
         echo mv ${OUTPUT}_rdict.pcm $LIBDIR/
         mv ${OUTPUT}_rdict.pcm $LIBDIR/
       fi
