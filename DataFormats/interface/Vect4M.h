@@ -43,30 +43,9 @@ namespace mithep
       Double32_t          fPhi; //[0,0,14]phi-component
       Double32_t          fM;   //[0,0,14]mass-component
 
-    ClassDef(Vect4M, 2) // Implementation of our own FourVectorM32
+    ClassDefNV(Vect4M, 2) // Implementation of our own FourVectorM32
   };
 }
 
 //--------------------------------------------------------------------------------------------------
-inline void mithep::Vect4M::Set(Double_t pt, Double_t eta, Double_t phi, Double_t m)
-{ 
-  // Set four vector.
-
-  fPt  = pt;
-  fEta = eta;
-  fPhi = phi;
-  fM   = m;
-}
-
-//--------------------------------------------------------------------------------------------------
-inline void mithep::Vect4M::SetXYZT(Double_t px, Double_t py, Double_t pz, Double_t e)
-{ 
-  // Set four vector.
-
-  FourVector tmp(px, py, pz, e);
-  fPt  = tmp.Pt();
-  fEta = tmp.Eta();
-  fPhi = tmp.Phi();
-  fM   = tmp.M();
-}
 #endif

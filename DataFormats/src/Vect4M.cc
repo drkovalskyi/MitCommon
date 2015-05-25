@@ -2,6 +2,27 @@
 
 #include "MitCommon/DataFormats/interface/Vect4M.h"
 
-ClassImp(mithep::Vect4M)
+
+void mithep::Vect4M::Set(Double_t pt, Double_t eta, Double_t phi, Double_t m)
+{ 
+  // Set four vector.
+
+  fPt  = pt;
+  fEta = eta;
+  fM   = m;
+  fPhi = phi;
+}
+//--------------------------------------------------------------------------------------------------
+void mithep::Vect4M::SetXYZT(Double_t px, Double_t py, Double_t pz, Double_t e)
+{ 
+  // Set four vector.
+
+  FourVector tmp(px, py, pz, e);
+  fPt  = tmp.Pt();
+  fEta = tmp.Eta();
+  fPhi = tmp.Phi();
+  fM   = tmp.M();
+}
+
 
 using namespace mithep;
