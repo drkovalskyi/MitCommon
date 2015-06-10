@@ -5,8 +5,6 @@
 #include "PhysicsTools/RooStatsCms/interface/ClopperPearsonBinomialInterval.h"
 #include "PhysicsTools/RooStatsCms/interface/FeldmanCousinsBinomialInterval.h"
 
-ClassImp(mithep::MathUtils)
-
 using namespace mithep;
 
 //--------------------------------------------------------------------------------------------------

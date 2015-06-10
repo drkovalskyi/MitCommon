@@ -1,6 +1,4 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Helix.h,v 1.3 2009/07/20 03:12:22 loizides Exp $
-//
 // Class Helix
 //
 // Implementation of a general helix class with a set of tools for working with objects like 
@@ -131,8 +129,6 @@ namespace mithep {
   
       // Needed whenever fSs or fCc are used.
       inline void      fCacheSinesAndCosines(double s) const;
-
-    ClassDef(Helix, 0) // General helix class
   };
 }
 

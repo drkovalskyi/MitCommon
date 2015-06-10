@@ -24,19 +24,16 @@ namespace mithep
       static TString     DomainName();                // get domain name (uses HOSTNAME)
       static TString     GetCatalogDir(const char* name); // get the catalog directory
       static TString     GetJsonFile(const char* name);   // get the json file
-
-    ClassDef(Utils, 0) // Utitily functions
   };
 }
 
-using namespace mithep;
 //--------------------------------------------------------------------------------------------------
-inline TString Utils::GetEnv(TString name)
+inline TString mithep::Utils::GetEnv(TString name)
 {
   return GetEnv(name.Data());
 }
 
-inline TString Utils::GetEnv(const char* name)
+inline TString mithep::Utils::GetEnv(const char* name)
 {
   if (! gSystem->Getenv(name)) {
     printf(" Environment variable: %s  not defined. EXIT!\n",name);
@@ -44,7 +41,7 @@ inline TString Utils::GetEnv(const char* name)
   } 
   return TString(gSystem->Getenv(name));  
 }
-inline TString Utils::DomainName()
+inline TString mithep::Utils::DomainName()
 {
   if (! gSystem->Getenv("HOSTNAME")) {
     printf(" Environment variable: HOSTNAME not defined. EXIT!\n");
@@ -56,7 +53,7 @@ inline TString Utils::DomainName()
 }
 
 //--------------------------------------------------------------------------------------------------
-inline TString Utils::GetCatalogDir(const char* dir)
+inline TString mithep::Utils::GetCatalogDir(const char* dir)
 {
   TString cataDir = TString("./catalog");
   Long_t *id=0,*size=0,*flags=0,*mt=0;
@@ -77,10 +74,10 @@ inline TString Utils::GetCatalogDir(const char* dir)
 }
 
 //--------------------------------------------------------------------------------------------------
-inline TString Utils::GetJsonFile(const char* dir)
+inline TString mithep::Utils::GetJsonFile(const char* dir)
 {
   TString jsonDir  = TString("./json");
-  TString json     = Utils::GetEnv("MIT_PROD_JSON");
+  TString json     = mithep::Utils::GetEnv("MIT_PROD_JSON");
   Long_t *id=0,*size=0,*flags=0,*mt=0;
 
   printf(" Try local json first: %s\n",jsonDir.Data());

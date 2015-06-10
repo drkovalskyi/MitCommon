@@ -1,6 +1,4 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Angle.h,v 1.3 2009/07/20 03:12:22 loizides Exp $
-//
 // Angle classes, with automatic range checking.  SignedAngle ranges from -PI to PI, UnsignedAngle
 // from 0 to 2PI.  The two types of angle convert implicitly into double.
 //
@@ -96,8 +94,6 @@ namespace mithep
       void                 FixRangeSlow();
 
       double               fValue;
-
-    ClassDef(SignedAngle, 0) // Signed angle class
   };
 
 
@@ -149,8 +145,6 @@ namespace mithep
       void                 FixRangeSlow();
 
       double               fValue;
-
-    ClassDef(UnsignedAngle, 0) // Unsigned angle class
   };
 
 // By default, "Angles" are unsigned (CDF convention: 0-2PI range).

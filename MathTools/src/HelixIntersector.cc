@@ -1,9 +1,5 @@
-// $Id: HelixIntersector.cc,v 1.3 2009/03/20 13:33:19 loizides Exp $
-
 #include "MitCommon/MathTools/interface/HelixIntersector.h"
 #include <iostream>
-
-ClassImp(mithep::HelixIntersector)
 
 using namespace std;
 using namespace mithep;

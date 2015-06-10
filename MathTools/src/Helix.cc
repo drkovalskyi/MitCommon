@@ -1,8 +1,6 @@
 #include "MitCommon/MathTools/interface/Helix.h"
 #include <TSystem.h>
 
-ClassImp(mithep::Helix)
-
 using namespace mithep;
 
 //--------------------------------------------------------------------------------------------------
