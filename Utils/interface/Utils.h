@@ -24,6 +24,8 @@ namespace mithep
       static TString     DomainName();                // get domain name (uses HOSTNAME)
       static TString     GetCatalogDir(const char* name); // get the catalog directory
       static TString     GetJsonFile(const char* name);   // get the json file
+      template<class C>
+      static void Reallocate(C*& ptr, UInt_t nelems, UInt_t newsize);
   };
 }
 
@@ -104,4 +106,15 @@ inline TString mithep::Utils::GetJsonFile(const char* dir)
 
   return jsonFile;
 }
+
+template<class C>
+void
+mithep::Utils::Reallocate(C*& ptr, UInt_t nelems, UInt_t newsize)
+{
+  auto tmp = new C[newsize];
+  std::copy(ptr, ptr + nelems, tmp);
+  delete [] ptr;
+  ptr = tmp;
+}
+
 #endif
