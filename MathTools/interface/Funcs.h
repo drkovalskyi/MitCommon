@@ -1,6 +1,4 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Funcs.h,v 1.2 2009/07/17 10:37:19 loizides Exp $
-//
 // Funcs
 //
 // Function definitions.
@@ -34,8 +32,6 @@ namespace mithep
       static Double_t  ZLineShapePlusBkg(Double_t *x, Double_t *par);
       static TF1      *CreateZLineShapePlusBkg(Double_t norm=1, Double_t xmin=60, Double_t xmax=110,
                                                const char *n="ZLineShapePlusBgk");
-
-    ClassDef(Funcs, 0) // Function definitions
   };
 }
 #endif

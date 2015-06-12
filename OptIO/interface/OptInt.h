@@ -1,6 +1,4 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: OptInt.h,v 1.5 2009/03/04 07:24:49 loizides Exp $
-//
 // OptInt
 //
 // Interface to set some of the optimized IO parameters. Use Compress or Decompress 
@@ -58,8 +56,6 @@ namespace mithep
       static void   SetStaticMalloc(Bool_t b);
       static void   SetVerbose(Int_t vl);
       static void   SetZipMode(Int_t zm);
-
-    ClassDef(OptInt, 0) // Interface to OptIO parameters
   };
 }
 #endif

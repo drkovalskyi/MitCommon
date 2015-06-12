@@ -1,9 +1,5 @@
-// $Id: Funcs.cc,v 1.3 2009/07/20 04:55:44 loizides Exp $
-
 #include "MitCommon/MathTools/interface/Funcs.h"
 #include <TF1.h>
-
-ClassImp(mithep::Funcs)
 
 using namespace mithep;
 

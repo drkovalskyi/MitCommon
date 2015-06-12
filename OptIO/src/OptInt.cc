@@ -1,13 +1,9 @@
-// $Id: OptInt.cc,v 1.5 2009/09/21 19:30:00 loizides Exp $
-
 #include "MitCommon/OptIO/interface/OptInt.h"
 #include <TROOT.h>
 #include <TSystem.h>
 #include <TError.h>
 #include <TEnv.h>
 #include <Riostream.h>
-
-ClassImp(mithep::OptInt)
 
 using namespace mithep;
 
