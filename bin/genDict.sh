@@ -125,8 +125,10 @@ do
       then
         HEADERS=$(sed -n 's|#include *"\([^"]*\)"|\1|p' $LINKDEF | tr '\n' ' ')
           
-        echo rootcling -f $TMPIR/$OUTPUT.cc -I$CMSSW_BASE/src $HEADERS $LINKDEF
+        echo rootcling -f $TMPDIR/$OUTPUT.cc -I$CMSSW_BASE/src $HEADERS $LINKDEF
         rootcling -f $TMPDIR/$OUTPUT.cc -I$CMSSW_BASE/src $HEADERS $LINKDEF
+
+        [ $? -eq 0 ] || exit 1
   
         echo mv $TMPDIR/${OUTPUT}.cc $SRCDIR/
         mv $TMPDIR/${OUTPUT}.cc $SRCDIR/
