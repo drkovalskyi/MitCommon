@@ -85,7 +85,12 @@ then
   done
 fi
 
-echo "Generating ROOT dictionaries for:"
+if $CLEAR
+then
+  echo "Clearing ROOT dictionaries in:"
+else
+  echo "Generating ROOT dictionaries for:"
+fi
 echo " $PACKAGES"
 
 TMPDIR=$CMSSW_BASE/tmp/$SCRAM_ARCH
@@ -115,7 +120,7 @@ do
 
     if $CLEAR
     then
-      rm -f $SRCDIR/$OUTPUT 2>/dev/null
+      rm -f $SRCDIR/$OUTPUT.cc 2>/dev/null
       rm -f $LIBDIR/${OUTPUT}_rdict.pcm 2>/dev/null
     else
       INCLUDES=$(makedepend -I. -f- $LINKDEF 2>/dev/null | awk '/Mit/ {print $2}' | tr '\n' ' ')
@@ -168,10 +173,13 @@ do
   fi
 done
 
-echo "=== genDict.sh ==="
-echo "ROOT dictionary binaries were copied to $CMSSW_BASE/lib/$SCRAM_ARCH."
-echo "Do not forget to run"
-echo '$CMSSW_BASE/src/MitCommon/bin/genDict.sh [packages]'
-echo "after next scram build clean."
-echo "=================="
-echo ""
+if ! $CLEAR
+then
+  echo "=== genDict.sh ==="
+  echo "ROOT dictionary binaries were copied to $CMSSW_BASE/lib/$SCRAM_ARCH."
+  echo "Do not forget to run"
+  echo '$CMSSW_BASE/src/MitCommon/bin/genDict.sh [packages]'
+  echo "after next scram build clean."
+  echo "=================="
+  echo ""
+fi
