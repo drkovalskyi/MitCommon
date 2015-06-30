@@ -112,7 +112,16 @@ do
   LIBDIR=$CMSSW_BASE/lib/$SCRAM_ARCH
   [ -d $LIBDIR ] || mkdir $LIBDIR
 
-  MAKEFILE=$DICTDIR/Makefile
+  # parse the BuildFile to find additional include directories
+  INCDIRS="-I$CMSSW_BASE/src"
+  DEPS=$(sed -n 's|<use  *name="\([^/]*\)"/>|\1|p' $PACKAGE/BuildFile.xml)
+  for DEP in $DEPS
+  do
+    CONFIG=$CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/$DEP.xml
+    [ -e $CONFIG ] || continue
+    eval $(sed -n 's|^ *<environment name="\(.*\)" default="\(.*\)"/>.*$|\1=\2|p' $CONFIG)
+    INCDIRS="$INCDIRS -I$INCLUDE"
+  done
 
   for LINKDEF in $(ls $DICTDIR/*LinkDef.h); do
     # the name of the dictionary code file generated from ABCLinkDef.h will be ABC_LinkDefDict.cc
@@ -129,9 +138,9 @@ do
       if $FORCE || $(check-update $SRCDIR/$OUTPUT.cc $INCLUDES $LINKDEF) || ! [ -e $LIBDIR/${OUTPUT}_rdict.pcm ]
       then
         HEADERS=$(sed -n 's|#include *"\([^"]*\)"|\1|p' $LINKDEF | tr '\n' ' ')
-          
-        echo rootcling -f $TMPDIR/$OUTPUT.cc -I$CMSSW_BASE/src $HEADERS $LINKDEF
-        rootcling -f $TMPDIR/$OUTPUT.cc -I$CMSSW_BASE/src $HEADERS $LINKDEF
+
+        echo rootcling -f $TMPDIR/$OUTPUT.cc $INCDIRS $HEADERS $LINKDEF
+        rootcling -f $TMPDIR/$OUTPUT.cc $INCDIRS $HEADERS $LINKDEF
 
         [ $? -eq 0 ] || exit 1
   
