@@ -1,6 +1,4 @@
 //--------------------------------------------------------------------------------------------------
-// $Id: Types.h,v 1.5 2009/03/03 17:06:36 loizides Exp $
-//
 // Types
 //
 // Here we define common types. For help on the GenVector lib, see

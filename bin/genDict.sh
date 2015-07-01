@@ -85,7 +85,12 @@ then
   done
 fi
 
-echo "Generating ROOT dictionaries for:"
+if $CLEAR
+then
+  echo "Clearing ROOT dictionaries in:"
+else
+  echo "Generating ROOT dictionaries for:"
+fi
 echo " $PACKAGES"
 
 TMPDIR=$CMSSW_BASE/tmp/$SCRAM_ARCH
@@ -107,7 +112,18 @@ do
   LIBDIR=$CMSSW_BASE/lib/$SCRAM_ARCH
   [ -d $LIBDIR ] || mkdir $LIBDIR
 
-  MAKEFILE=$DICTDIR/Makefile
+  # parse the BuildFile to find additional include directories
+  INCDIRS="-I$CMSSW_BASE/src"
+  DEPS=$(sed -n 's|<use  *name="\([^/]*\)"/>|\1|p' $PACKAGE/BuildFile.xml)
+  for DEP in $DEPS
+  do
+    CONFIG=$CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/$DEP.xml
+    [ -e $CONFIG ] || continue
+    (
+      eval $(sed -n 's|^ *<environment  *name="\(.*\)"  *default="\(.*\)"/>.*$|\1=\2|p' $CONFIG) #read off all variables defined in xml
+      [ $INCLUDE ] && INCDIRS="$INCDIRS -I$INCLUDE"
+    ) # two lines in paren to avoid exporting / overwriting variables
+  done
 
   for LINKDEF in $(ls $DICTDIR/*LinkDef.h); do
     # the name of the dictionary code file generated from ABCLinkDef.h will be ABC_LinkDefDict.cc
@@ -115,7 +131,7 @@ do
 
     if $CLEAR
     then
-      rm -f $SRCDIR/$OUTPUT 2>/dev/null
+      rm -f $SRCDIR/$OUTPUT.cc 2>/dev/null
       rm -f $LIBDIR/${OUTPUT}_rdict.pcm 2>/dev/null
     else
       INCLUDES=$(makedepend -I. -f- $LINKDEF 2>/dev/null | awk '/Mit/ {print $2}' | tr '\n' ' ')
@@ -124,9 +140,11 @@ do
       if $FORCE || $(check-update $SRCDIR/$OUTPUT.cc $INCLUDES $LINKDEF) || ! [ -e $LIBDIR/${OUTPUT}_rdict.pcm ]
       then
         HEADERS=$(sed -n 's|#include *"\([^"]*\)"|\1|p' $LINKDEF | tr '\n' ' ')
-          
-        echo rootcling -f $TMPIR/$OUTPUT.cc -I$CMSSW_BASE/src $HEADERS $LINKDEF
-        rootcling -f $TMPDIR/$OUTPUT.cc -I$CMSSW_BASE/src $HEADERS $LINKDEF
+
+        echo rootcling -f $TMPDIR/$OUTPUT.cc $INCDIRS $HEADERS $LINKDEF
+        rootcling -f $TMPDIR/$OUTPUT.cc $INCDIRS $HEADERS $LINKDEF
+
+        [ $? -eq 0 ] || exit 1
   
         echo mv $TMPDIR/${OUTPUT}.cc $SRCDIR/
         mv $TMPDIR/${OUTPUT}.cc $SRCDIR/
@@ -166,10 +184,13 @@ do
   fi
 done
 
-echo "=== genDict.sh ==="
-echo "ROOT dictionary binaries were copied to $CMSSW_BASE/lib/$SCRAM_ARCH."
-echo "Do not forget to run"
-echo '$CMSSW_BASE/src/MitCommon/bin/genDict.sh [packages]'
-echo "after next scram build clean."
-echo "=================="
-echo ""
+if ! $CLEAR
+then
+  echo "=== genDict.sh ==="
+  echo "ROOT dictionary binaries were copied to $CMSSW_BASE/lib/$SCRAM_ARCH."
+  echo "Do not forget to run"
+  echo '$CMSSW_BASE/src/MitCommon/bin/genDict.sh [packages]'
+  echo "after next scram build clean."
+  echo "=================="
+  echo ""
+fi
