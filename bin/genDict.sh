@@ -119,8 +119,10 @@ do
   do
     CONFIG=$CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/$DEP.xml
     [ -e $CONFIG ] || continue
-    eval $(sed -n 's|^ *<environment name="\(.*\)" default="\(.*\)"/>.*$|\1=\2|p' $CONFIG)
-    INCDIRS="$INCDIRS -I$INCLUDE"
+    (
+      eval $(sed -n 's|^ *<environment  *name="\(.*\)"  *default="\(.*\)"/>.*$|\1=\2|p' $CONFIG) #read off all variables defined in xml
+      [ $INCLUDE ] && INCDIRS="$INCDIRS -I$INCLUDE"
+    ) # two lines in paren to avoid exporting / overwriting variables
   done
 
   for LINKDEF in $(ls $DICTDIR/*LinkDef.h); do
