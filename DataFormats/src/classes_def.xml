@@ -1,0 +1,31 @@
+<lcgdict>
+  <class name="mithep::Hist1DRat"/>
+  <class name="mithep::TH2DAsymErr"/>
+  <class name="mithep::TH3DAsymErr"/>
+  <class name="mithep::Vect3"/>
+  <class name="mithep::Vect3C"/>
+  <class name="mithep::Vect4M"/>
+  
+  <typedef name="mithep::FourVector"/>
+  <typedef name="mithep::FourVectorM"/>
+  <typedef name="mithep::FourVectorE"/>
+  <typedef name="mithep::ThreeVector"/>
+  <typedef name="mithep::ThreeVectorC"/>
+  <typedef name="mithep::ThreeSymMatrix"/>
+  <typedef name="mithep::SevenSymMatrix"/>
+  <typedef name="mithep::ThreeMatrix"/>
+  <typedef name="mithep::SevenMatrix"/>
+  <typedef name="mithep::FourVector32"/>
+  <typedef name="mithep::FourVectorM32"/>
+  <typedef name="mithep::FourVectorE32"/>
+  <typedef name="mithep::ThreeVector32"/>
+  <typedef name="mithep::ThreeVectorC32"/>
+  <typedef name="mithep::ThreeSymMatrix32"/>
+  <typedef name="mithep::SevenSymMatrix32"/>
+  <typedef name="mithep::ThreeMatrix32"/>
+  <typedef name="mithep::SevenMatrix32"/>
+  <typedef name="mithep::UIntPair"/>
+  <typedef name="mithep::UIntBounds"/>
+
+  <enum name="mithep::TH2DAsymErr::EErrType"/>
+</lcgdict>
